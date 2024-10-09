@@ -19,8 +19,9 @@ public:
     void DeleteCheck();
     void DeleteUnit();
     bool OpponentInRange();
-    bool BehindAlly();
-    Unit* FindClosestUnit();
+    bool AllyInFront();
+    bool OpponentInFront();
+    Unit* FindClosestOpponent();
     void Attack();
     void MoveUnit();
     void Damage(int damage);

@@ -28,7 +28,7 @@ void Unit::UpdateObj()
     if (OpponentInRange()) {
         AttackWithCooldown();
     }
-    else if (!OpponentInRange() && !BehindAlly()) {
+    else if (!OpponentInRange() && !AllyInFront()) {
         MoveUnit();
         attackCooldownClock.restart();
     }
@@ -48,10 +48,41 @@ void Unit::RenderObj(sf::RenderWindow& win) {
         bar.Draw(barSize, sf::Vector2f(GetPos().x, GetPos().y - 50), percentage, win);
     }
 }
-float CalculateDistance(sf::Vector2f pos1, sf::Vector2f pos2) {
-    float dx = pos1.x - pos2.x;
-    float dy = pos1.y - pos2.y;
-    return std::sqrt(dx * dx + dy * dy);
+//----------------------------------Enemy Behaviour------------------------------------------
+bool Unit::AllyInFront() {
+    std::vector<Unit*> allyList = isEnemy ? dataManRef->GetEnemies() : dataManRef->GetGuardians();
+    for (const auto& unit : allyList) {
+        //if ally is in front of this unit, return true
+        if (isEnemy) {
+            if (unit->GetPos().x < this->GetPos().x) {
+                if (CalculateDistance(this->GetPos().x, unit->GetPos().x) <= waitForAllyRange) return true;
+            }
+        }
+        else {
+            if (unit->GetPos().x > this->GetPos().x) {
+                if (CalculateDistance(this->GetPos().x, unit->GetPos().x) <= waitForAllyRange) return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Unit::OpponentInFront()
+{
+    std::vector<Unit*> opponentList = !isEnemy ? dataManRef->GetEnemies() : dataManRef->GetGuardians();
+    for (const auto& opp : opponentList) {
+        if (!isEnemy) {
+            if (opp->GetPos().x < this->GetPos().x) {
+                if (CalculateDistance(this->GetPos().x, opp->GetPos().x) <= waitForAllyRange) return true;
+            }
+        }
+        else {
+            if (opp->GetPos().x > this->GetPos().x) {
+                if (CalculateDistance(this->GetPos().x, opp->GetPos().x) <= waitForAllyRange) return true;
+            }
+        }
+    }
+    return false;
 }
 
 bool Unit::OpponentInRange() {
@@ -74,32 +105,11 @@ bool Unit::OpponentInRange() {
     
     return false;
 }
-bool Unit::BehindAlly() {
-    std::vector<Unit*> allyList;
-    isEnemy ? allyList = dataManRef->GetEnemies() : allyList = dataManRef->GetGuardians();
-    for (const auto& unit : allyList) {
-        //if ally is in front of this unit, return true
-        if (isEnemy) {
-            if (unit->GetPos().x < this->GetPos().x) {
-                float distance = CalculateDistance(this->GetPos(), unit->GetPos());
-                if (distance <= waitForAllyRange) {
-                    return true;
-                }
-            }
-        }
-        else {
-            if (unit->GetPos().x > this->GetPos().x) {
-                float distance = CalculateDistance(this->GetPos(), unit->GetPos());
-                if (distance <= waitForAllyRange) {
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
-}
 
-Unit* Unit::FindClosestUnit() {
+
+Unit* Unit::FindClosestOpponent() {
+    std::vector<Unit*> opponentList = !isEnemy ? dataManRef->GetEnemies() : dataManRef->GetGuardians();
+
     std::vector<Unit*> unitList;
     isEnemy ? unitList = dataManRef->GetGuardians() : unitList = dataManRef->GetEnemies();
     Unit* closestUnit = nullptr;
@@ -113,22 +123,28 @@ Unit* Unit::FindClosestUnit() {
             closestUnit = unit;
         }
     }
-    //if (isEnemy) {
-    //    float distance = CalculateDistance(this->GetPos(), dataManRef->playerBase->GetPos());
-    //    if (distance < closestDistance) 
-    //}
-    //if (!isEnemy) {
-    //    float distance = CalculateDistance(this->GetPos(), dataManRef->enemyBase->GetPos());
-    //    if (distance < closestDistance) return true;
-    //}
     return closestUnit;
 }
 void Unit::Attack() {
-    //std::cout << "Attack" << std::endl;
     Unit* closestUnit = FindClosestUnit();
-    if (closestUnit) {
-
-        dataManRef->DamageUnit(closestUnit, 25);
+    //std::cout << "Attack" << std::endl;
+    if (isEnemy) {
+        float distance = CalculateDistance(this->GetPos(), dataManRef->playerBase->GetPos());
+        if (distance < closestUnit->GetPos().x) {
+            dataManRef->playerBase->Damage(10);
+        }
+        else {
+            dataManRef->DamageUnit(closestUnit, 25);
+        }
+    }
+    if (!isEnemy) {
+        float distance = CalculateDistance(this->GetPos(), dataManRef->enemyBase->GetPos());
+        if (distance < closestUnit->GetPos().x) {
+            dataManRef->enemyBase->Damage(10);
+        }
+        else {
+            dataManRef->DamageUnit(closestUnit, 25);
+        }
     }
 }
 void Unit::AttackWithCooldown() {
@@ -151,6 +167,14 @@ void Unit::MoveUnit() {
     newPos.x += movementSpeed / 10;
     SetPos(newPos);
 }
+float CalculateDistance(float x1, float x2) {
+    return std::abs(x1 - x2);
+}
+//float CalculateDistance(sf::Vector2f pos1, sf::Vector2f pos2) {
+//    float dx = pos1.x - pos2.x;
+//    float dy = pos1.y - pos2.y;
+//    return std::sqrt(dx * dx + dy * dy);
+//}
 void Unit::DeleteCheck() {
     if (markedForDeletion) {
         if (deletionClock.getElapsedTime().asSeconds() >= timeBeforeDeath) {
