@@ -22,6 +22,8 @@ public:
     bool AllyInFront();
     bool OpponentInFront();
     Unit* FindClosestOpponent();
+    bool ReachedOpponentBase();
+    float CalculateDistance(float x1, float x2);
     void Attack();
     void MoveUnit();
     void Damage(int damage);

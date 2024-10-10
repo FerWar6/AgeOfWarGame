@@ -5,6 +5,8 @@
 #include <algorithm>
 
 class DataManager;
+class UIRenderer;
+class EnemySpawner;
 
 class Engine {
 public:
@@ -14,8 +16,12 @@ public:
 	void UpdateGame();
 	void InputCheck();
 	void RenderGame();
+	void StopGame(int won);
 	sf::RenderWindow& GetWin();
 private:
+	bool gameIsRunning;
 	sf::RenderWindow window;
 	DataManager* dataMan;
+	UIRenderer* uiRenderer;
+	EnemySpawner* enemySpawner;
 };

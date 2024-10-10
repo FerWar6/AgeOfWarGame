@@ -4,8 +4,10 @@
 #include "Base.h"
 #include <algorithm>
 
-DataManager::DataManager(int money, int width, int height)
-    : playerMoney(money)
+DataManager::DataManager(int money, int width, int height, Engine* engine)
+    : playerMoney(money),
+    playerExperience(0),
+    engineRef(engine)
 {
     CreateBase(sf::Vector2f(100, height / 2), 100, false);
     CreateBase(sf::Vector2f(width - 100, height / 2), 100, true);
@@ -48,6 +50,16 @@ std::vector<Unit*>& DataManager::GetGuardians() {
 std::vector<Object*>& DataManager::GetGameObjects()
 {
     return gameObjects;
+}
+
+void DataManager::AddMoney(int moneyAmount)
+{
+    playerMoney += moneyAmount;
+}
+
+void DataManager::AddExperience(int experienceAmount)
+{
+    playerExperience += experienceAmount;
 }
 
 // Add an enemy to the enemies vector

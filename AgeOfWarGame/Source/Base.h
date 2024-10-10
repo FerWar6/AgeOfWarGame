@@ -13,7 +13,7 @@ public:
     void RenderObj(sf::RenderWindow& win) override;
     Base(sf::Vector2f pos, DataManager* man, int health, bool enemy);
     void Damage(int damage);
-    void EndGame();
+    void EndGame(int won);
     bool isEnemy;
 private:
     int baseHealth;

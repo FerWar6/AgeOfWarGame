@@ -13,7 +13,7 @@ class Object;
 class DataManager {
 public:
     DataManager() {};
-    DataManager(int money, int width, int height);
+    DataManager(int money, int width, int height, Engine* engine);
     sf::RenderWindow window;
     void CreateEnemy(sf::Vector2f pos, DataManager* man, int health = 100, float speed = 1.0f,
         int meleeDmg = 10, float meleeAtckSpd = 1.0f,
@@ -54,6 +54,10 @@ public:
     Base* enemyBase;
     Base* playerBase;
 
-private:
+    Engine* engineRef;
     int playerMoney;
+    void AddMoney(int moneyAmount);
+    int playerExperience;
+    void AddExperience(int experienceAmount);
+private:
 };

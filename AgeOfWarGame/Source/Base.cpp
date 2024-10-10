@@ -29,9 +29,12 @@ void Base::RenderObj(sf::RenderWindow& win)
 void Base::Damage(int damage)
 {
     baseHealth -= damage;
-    if (baseHealth <= 0) EndGame();
+    if (baseHealth <= 0) {
+        isEnemy ? EndGame(1) : EndGame(2);
+    }
 }
-void Base::EndGame()
+void Base::EndGame(int won)
 {
+    dataManRef->engineRef->StopGame(won);
     isEnemy ? std::cout << "You Won" : std::cout << "You Lost";
 }
