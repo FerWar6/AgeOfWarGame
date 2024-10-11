@@ -1,14 +1,15 @@
-#include "Object.h"
-#include "engine.h"
 #pragma once
-class EnemySpawner : public Object
-{
+#include "DataManager.h"
+#include "engine.h"
+class EnemySpawner{
 public:
 	EnemySpawner(float cooldown, DataManager* dataMan);
-	void UpdateObj() override;
+	void UpdateSpawner();
 	float spawnCooldown;
 private:
 	sf::Clock spawnCooldownClock;
+	DataManager* dataManRef;
+	sf::Texture texture;
 };
 
 

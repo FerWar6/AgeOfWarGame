@@ -1,46 +1,72 @@
 #include "Unit.h"
 
-Unit::Unit(bool enemy, sf::Vector2f pos, DataManager* man, int maxHealth = 100, float speed = 1.0f,
-    int meleeDmg = 10, float meleeAtckSpd = 1.0f,
-    int rangedDmg = 15, float rangedAtckSpd = 1.0f,
-    float sightRnge = 100.0f, float spwnTime = 1.0f,
-    int exp = 0, int money = 0)
-    : Object(pos, man),
+Unit::Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
+    bool enemy, float melCooldown, int melDamage, float melSightRange,
+    float rangCooldown, int rangDamage, float rangSightRange,
+    float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
+    int money, int exp)
+    : Object(pos, man, texture),
     isEnemy(enemy),
+    meleeAttackCoolDown(melCooldown),
+    meleeDamage(melDamage),
+    meleeSightRange(melSightRange),
+    isRanged(true),
+    rangedAttackCoolDown(rangCooldown),
+    rangedDamage(rangDamage),
+    rangedSightRange(rangSightRange),
+    allySightRange(alSightRange),
     unitMaxHealth(maxHealth),
-    movementSpeed(speed),
-    meleeDamage(meleeDmg),
-    meleeAttackCoolDown(meleeAtckSpd),
-    rangedDamage(rangedDmg),
-    rangedAttackCoolDown(rangedAtckSpd),
-    sightRange(sightRnge),
+    movementSpeed(moveSpeed),
     spawnTime(spwnTime),
+    moneyValue(money),
     expValue(exp),
-    moneyValue(money)
+    timeBeforeDeath(0.05f)
 {
     unitHealth = maxHealth;
     if (isEnemy) movementSpeed = -movementSpeed;
     markedForDeletion = false;
-    waitForAllyRange = 100;
+}
+Unit::Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
+    bool enemy, float melCooldown, int melDamage, float melSightRange,
+    float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
+    int money, int exp)
+    : Object(pos, man, texture),
+    isEnemy(enemy),
+    meleeAttackCoolDown(melCooldown),
+    meleeDamage(melDamage),
+    meleeSightRange(melSightRange),
+    isRanged(false),
+    rangedAttackCoolDown(0),
+    rangedDamage(0),
+    rangedSightRange(0),
+    allySightRange(alSightRange),
+    unitMaxHealth(maxHealth),
+    movementSpeed(moveSpeed),
+    spawnTime(spwnTime),
+    moneyValue(money),
+    expValue(exp),
+    timeBeforeDeath(0.05f)
+{
+    unitHealth = maxHealth;
+    if (isEnemy) movementSpeed = -movementSpeed;
+    markedForDeletion = false;
 }
 void Unit::UpdateObj()
 {
     if (OpponentInRange() || ReachedOpponentBase()) {
-        //std::cout << "attack" << std::endl;
-        //std::cout << OpponentInRange() << std::endl;
-        //std::cout << ReachedOpponentBase() << std::endl;
         AttackWithCooldown();
     }
     else if (!AllyInFront()) {
         MoveUnit();
-        attackCooldownClock.restart();
+        meleeAttackCooldownClock.restart();
     }
     else {
-        attackCooldownClock.restart();
+        meleeAttackCooldownClock.restart();
     }
     DeleteCheck();
 }
 void Unit::RenderObj(sf::RenderWindow& win) {
+
     sf::Vector2f UnitSize(25, 50);
     sf::Vector2f centerPos = sf::Vector2f(GetPos().x - UnitSize.x / 2, GetPos().y - UnitSize.y / 2);
     sf::RectangleShape unitShape(UnitSize);
@@ -48,6 +74,7 @@ void Unit::RenderObj(sf::RenderWindow& win) {
     sf::Color col = isEnemy ? col = sf::Color::Red : sf::Color::Green;
     unitShape.setFillColor(col);
     win.draw(unitShape);
+
     if (!markedForDeletion) {
         sf::Vector2f barSize(30, 7);
         float percentage = static_cast<float>(unitHealth) / static_cast<float>(unitMaxHealth);
@@ -66,12 +93,12 @@ bool Unit::AllyInFront() {
         //if ally is in front of this unit, return true
         if (isEnemy) {
             if (unit->GetPos().x < this->GetPos().x) {
-                if (CalculateDistance(this->GetPos().x, unit->GetPos().x) <= waitForAllyRange) return true;
+                if (CalculateDistance(this->GetPos().x, unit->GetPos().x) <= allySightRange) return true;
             }
         }
         else {
             if (unit->GetPos().x > this->GetPos().x) {
-                if (CalculateDistance(this->GetPos().x, unit->GetPos().x) <= waitForAllyRange) return true;
+                if (CalculateDistance(this->GetPos().x, unit->GetPos().x) <= allySightRange) return true;
             }
         }
     }
@@ -96,7 +123,7 @@ bool Unit::OpponentInRange() {
     std::vector<Unit*> opponentList = !isEnemy ? dataManRef->GetEnemies() : dataManRef->GetGuardians();
     for (const auto& opp : opponentList) {
         float distance = CalculateDistance(this->GetPos().x, opp->GetPos().x);
-        if (distance <= sightRange) {
+        if (distance <= meleeSightRange) {
             return true;
         }
     }
@@ -122,7 +149,7 @@ bool Unit::ReachedOpponentBase()
     Base* targetBase = isEnemy ? dataManRef->playerBase : dataManRef->enemyBase;
 
     float distance = CalculateDistance(this->GetPos().x, targetBase->GetPos().x);
-    if (distance <= sightRange) {
+    if (distance <= meleeSightRange) {
         return true;
     }
     return false;
@@ -142,9 +169,9 @@ void Unit::Attack() {
     }
 }
 void Unit::AttackWithCooldown() {
-    if (attackCooldownClock.getElapsedTime().asSeconds() >= meleeAttackCoolDown) {
+    if (meleeAttackCooldownClock.getElapsedTime().asSeconds() >= meleeAttackCoolDown) {
         Attack();
-        attackCooldownClock.restart();
+        meleeAttackCooldownClock.restart();
     }   
 }
 

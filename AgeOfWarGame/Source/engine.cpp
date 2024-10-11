@@ -10,7 +10,7 @@ Engine::Engine(int width, int height, const char* windowName)
     window.create(sf::VideoMode(width, height), windowName);
     dataMan = new DataManager(100, width, height, this);
     uiRenderer = new UIRenderer(dataMan, this);
-    enemySpawner = new EnemySpawner(5, dataMan);
+    enemySpawner = new EnemySpawner(4, dataMan);
     Start();
 }
 void Engine::Start() {
@@ -37,6 +37,7 @@ void Engine::UpdateEngine()
 
 void Engine::UpdateGame()
 {
+    enemySpawner->UpdateSpawner();
     for (auto& obj : dataMan->GetGameObjects()) {
         obj->UpdateObj();
     }
@@ -69,7 +70,7 @@ void Engine::InputCheck() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && inputCooldownClock.getElapsedTime().asSeconds() >= inputCooldown) {
         int unitCost = 25;
         if (dataMan->playerMoney >= unitCost) {
-            dataMan->CreateGuardian(sf::Vector2f(150, 250), dataMan);
+            dataMan->CreateGuardian(dataMan->playerBase->frontOfBasePos, dataMan, dataMan->placeHoldTexture);
             dataMan->playerMoney -= unitCost;
             inputCooldownClock.restart();
         }

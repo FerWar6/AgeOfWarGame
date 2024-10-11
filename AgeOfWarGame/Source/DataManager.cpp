@@ -9,13 +9,18 @@ DataManager::DataManager(int money, int width, int height, Engine* engine)
     playerExperience(0),
     engineRef(engine)
 {
+    if (!placeHoldTexture.loadFromFile("Assets/wizard attack.png")) {
+        std::cerr << "Error loading texture!" << std::endl;
+    }
     CreateBase(sf::Vector2f(100, height / 2), 100, false);
     CreateBase(sf::Vector2f(width - 100, height / 2), 100, true);
 }
 
+
+
 void DataManager::CreateBase(sf::Vector2f pos, int health, bool enemy)
 {
-    Base* base = new Base(pos, this, health, enemy);
+    Base* base = new Base(pos, this, placeHoldTexture, health, enemy);
     SetBase(base);
 }
 
@@ -62,27 +67,24 @@ void DataManager::AddExperience(int experienceAmount)
     playerExperience += experienceAmount;
 }
 
-// Add an enemy to the enemies vector
-void DataManager::CreateEnemy(sf::Vector2f pos, DataManager* man, int health, float speed,
-    int meleeDmg, float meleeAtckSpd,
-    int rangedDmg, float rangedAtckSpd,
-    float sightRnge, float spwnTime,
-    int exp, int money)
+void DataManager::CreateEnemy(sf::Vector2f pos, DataManager* man, 
+    sf::Texture texture, float melCooldown, int melDamage, 
+    float melSightRange, float alSightRange, int maxHealth, float moveSpeed, 
+    float spwnTime, int money, int exp)
 {
-    Unit* enemy = new Unit(true, pos, man, health, speed, meleeDmg, meleeAtckSpd,
-        rangedDmg, rangedAtckSpd, sightRnge, spwnTime, exp, money);
-    AddEnemy(enemy);
+    Unit* newEnemy = new Unit(pos, man, texture, true, melCooldown, melDamage,
+        melSightRange, alSightRange, maxHealth, moveSpeed, spwnTime, money, exp);
+    AddEnemy(newEnemy);
 }
 
-void DataManager::CreateGuardian(sf::Vector2f pos, DataManager* man, int health, float speed,
-    int meleeDmg, float meleeAtckSpd,
-    int rangedDmg, float rangedAtckSpd,
-    float sightRnge, float spwnTime,
-    int exp, int money)
+void DataManager::CreateGuardian(sf::Vector2f pos, DataManager* man,
+    sf::Texture texture, float melCooldown, int melDamage,
+    float melSightRange, float alSightRange, int maxHealth, float moveSpeed,
+    float spwnTime, int money, int exp)
 {
-    Unit* guardian = new Unit(false, pos, man, health, speed, meleeDmg, meleeAtckSpd,
-        rangedDmg, rangedAtckSpd, sightRnge, spwnTime, exp, money);
-    AddGuardian(guardian);
+    Unit* newGuardian = new Unit(pos, man, texture, false, melCooldown, melDamage,
+        melSightRange, alSightRange, maxHealth, moveSpeed, spwnTime, money, exp);
+    AddGuardian(newGuardian);
 }
 
 void DataManager::DeleteUnit(Unit* markedUnit) {

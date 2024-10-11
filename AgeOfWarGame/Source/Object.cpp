@@ -1,8 +1,9 @@
 #include "Object.h"
 
-Object::Object(sf::Vector2f pos, DataManager* dataMan)
+Object::Object(sf::Vector2f pos, DataManager* dataMan, sf::Texture texture)
     : objectPos(pos),
-    dataManRef(dataMan)
+    dataManRef(dataMan),
+    objTexture(texture)
 {
     dataManRef->AddGameObject(this);
 }

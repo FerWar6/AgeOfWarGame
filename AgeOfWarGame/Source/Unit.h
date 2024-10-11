@@ -6,54 +6,67 @@
 #include "DataManager.h"
 #include <cmath>
 #include <limits>
-//class DataManager;
 
 class Unit : public Object{
 public:
+    //Unit Constructor
+    Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
+        bool enemy, float melCooldown, int melDamage, float melSightRange,
+        float rangCooldown, int rangDamage, float rangSightRange,
+        float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
+        int money, int exp);
+    Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
+        bool enemy, float melCooldown, int melDamage, float melSightRange,
+        float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
+        int money, int exp);
+    //Object Overrides
     void UpdateObj() override;
     void RenderObj(sf::RenderWindow& win) override;
-    Unit(bool enemy, sf::Vector2f pos, DataManager* man, int health, float speed, int meleeDmg, float meleeAtckSpd,
-        int rangedDmg, float rangedAtckSpd, float sightRnge, float spwnTime,
-        int exp, int money);
+    //Unit Attack
     void AttackWithCooldown();
-    void DeleteCheck();
-    void DeleteUnit();
-    bool OpponentInRange();
+    void Attack();
     bool AllyInFront();
     bool OpponentInFront();
-    Unit* FindClosestOpponent();
+    bool OpponentInRange();
     bool ReachedOpponentBase();
-    float CalculateDistance(float x1, float x2);
-    void Attack();
+    Unit* FindClosestOpponent();
+    //Unit Movement
     void MoveUnit();
+    //Unit Deletion
     void Damage(int damage);
-    bool isEnemy; //Is the unit an enemy
+    void DeleteCheck();
+    void DeleteUnit();
 
-    sf::Clock attackCooldownClock;
-    float meleeAttackCoolDown; //Units melee attack speed
+    float CalculateDistance(float x1, float x2);
 
+    bool isEnemy;
 private:
     HealthBar bar;
 
-    sf::Clock deletionClock;
-    float timeBeforeDeath = 0.05f;
+    sf::Clock meleeAttackCooldownClock;
+    float meleeAttackCoolDown;
+    int meleeDamage;
+    float meleeSightRange;
+
+    bool isRanged;
+    sf::Clock rangedAttackCooldownClock;
+    float rangedAttackCoolDown;
+    int rangedDamage;
+    float rangedSightRange;
+
+    float allySightRange;
 
     int unitMaxHealth;
-    int unitHealth; //Units health
-    float movementSpeed; //Units movement speed
+    int unitHealth;
 
-    int meleeDamage; //Units melee attack damage
-    int rangedDamage; //Units ranged attack damage
-    float rangedAttackCoolDown; //Units ranged attack speed
+    float movementSpeed;
 
-    float waitForAllyRange;
-    float sightRange; //The sight range of the Unit
-    //bool opponentInRange; //Is true if the opponent is in range
-    float spawnTime; //The time for a Unit to spawn
+    float spawnTime;
 
-    int expValue; //The amount of experience the player gains when an enemy Unit is killed
-    int moneyValue; //The amount of money the player gains when an enemy Unit is killed
+    int moneyValue;
+    int expValue;
 
-    //float timeInSight;
     bool markedForDeletion;
+    sf::Clock deletionClock;
+    float timeBeforeDeath = 0.05f;
 };

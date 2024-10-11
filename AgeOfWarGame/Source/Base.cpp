@@ -1,10 +1,11 @@
 #include "Base.h"
 
-Base::Base(sf::Vector2f pos, DataManager* man, int health, bool enemy)
-	: Object(pos, man),
+Base::Base(sf::Vector2f pos, DataManager* man, sf::Texture texture, int health, bool enemy)
+	: Object(pos, man, texture),
 	maxBaseHealth(health),
 	isEnemy(enemy)
 {
+    frontOfBasePos = sf::Vector2f(isEnemy ? pos.x - 70 : pos.x + 70, pos.y);
     baseHealth = maxBaseHealth;
 }
 void Base::UpdateObj()

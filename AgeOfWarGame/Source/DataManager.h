@@ -15,17 +15,15 @@ public:
     DataManager() {};
     DataManager(int money, int width, int height, Engine* engine);
     sf::RenderWindow window;
-    void CreateEnemy(sf::Vector2f pos, DataManager* man, int health = 100, float speed = 1.0f,
-        int meleeDmg = 10, float meleeAtckSpd = 1.0f,
-        int rangedDmg = 15, float rangedAtckSpd = 1.0f,
-        float sightRnge = 100.0f, float spwnTime = 1.0f,
-        int exp = 0, int money = 0);
+    void CreateEnemy(sf::Vector2f pos, DataManager* man, sf::Texture texture,
+        float melCooldown = 0.75, int melDamage = 34, float melSightRange = 100,
+        float alSightRange = 75, int maxHealth = 100, float moveSpeed = 1, float spwnTime = 1,
+        int money = 50, int exp = 50);
 
-    void CreateGuardian(sf::Vector2f pos, DataManager* man, int health = 100, float speed = 1.0f,
-        int meleeDmg = 10, float meleeAtckSpd = 1.0f,
-        int rangedDmg = 15, float rangedAtckSpd = 1.0f,
-        float sightRnge = 100.0f, float spwnTime = 1.0f,
-        int exp = 0, int money = 0);
+    void CreateGuardian(sf::Vector2f pos, DataManager* man, sf::Texture texture,
+        float melCooldown = 0.75, int melDamage = 34, float melSightRange = 100,
+        float alSightRange = 75, int maxHealth = 100, float moveSpeed = 1, float spwnTime = 1,
+        int money = 50, int exp = 50);
 
     void CreateBase(sf::Vector2f pos, int health, bool enemy);
 
@@ -59,5 +57,7 @@ public:
     void AddMoney(int moneyAmount);
     int playerExperience;
     void AddExperience(int experienceAmount);
+
+    sf::Texture placeHoldTexture;
 private:
 };

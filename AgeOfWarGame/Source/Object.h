@@ -5,7 +5,7 @@
 
 class Object{
 public:
-	Object(sf::Vector2f pos, DataManager* dataMan);
+	Object(sf::Vector2f pos, DataManager* dataMan, sf::Texture texture);
 	virtual void UpdateObj();
 	virtual void RenderObj(sf::RenderWindow& win);
 	DataManager* dataManRef;
@@ -13,4 +13,5 @@ public:
 	void SetPos(sf::Vector2f newPos);
 private:
 	sf::Vector2f objectPos;
+	sf::Texture objTexture;
 };
