@@ -1,5 +1,4 @@
 #pragma once
-#include "HealthBar.h"
 #include "Object.h"
 #include "engine.h"
 #include "Base.h"
@@ -41,7 +40,6 @@ public:
 
     bool isEnemy;
 private:
-    HealthBar bar;
 
     sf::Clock meleeAttackCooldownClock;
     float meleeAttackCoolDown;

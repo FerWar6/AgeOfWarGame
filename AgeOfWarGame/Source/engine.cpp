@@ -8,8 +8,7 @@ Engine::Engine(int width, int height, const char* windowName)
 {
     gameIsRunning = true;
     window.create(sf::VideoMode(width, height), windowName);
-    dataMan = new DataManager(100, width, height, this);
-    uiRenderer = new UIRenderer(dataMan, this);
+    dataMan = new DataManager(100, width, height, this, window);
     enemySpawner = new EnemySpawner(4, dataMan);
     Start();
 }
@@ -49,14 +48,14 @@ void Engine::RenderGame()
     for (auto& obj : dataMan->GetGameObjects()) {
         obj->RenderObj(window);
     }
-    uiRenderer->Render(window);
+    dataMan->uiRen->Render();
 }
 
 void Engine::StopGame(int won)
 {
     gameIsRunning = false;
-    if (won == 1) uiRenderer->winState = 1;
-    if (won == 2) uiRenderer->winState = 2;
+    if (won == 1) dataMan->uiRen->winState = 1;
+    if (won == 2) dataMan->uiRen->winState = 2;
 }
 
 sf::RenderWindow& Engine::GetWin()

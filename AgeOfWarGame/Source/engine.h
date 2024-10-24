@@ -5,7 +5,6 @@
 #include <algorithm>
 
 class DataManager;
-class UIRenderer;
 class EnemySpawner;
 
 class Engine {
@@ -22,6 +21,5 @@ private:
 	bool gameIsRunning;
 	sf::RenderWindow window;
 	DataManager* dataMan;
-	UIRenderer* uiRenderer;
 	EnemySpawner* enemySpawner;
 };

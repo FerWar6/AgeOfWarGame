@@ -2,16 +2,19 @@
 #include "Object.h"
 #include "Unit.h"
 #include "Base.h"
+#include "UIRenderer.h"
 #include <algorithm>
 
-DataManager::DataManager(int money, int width, int height, Engine* engine)
+DataManager::DataManager(int money, int width, int height, Engine* engine, sf::RenderWindow& window)
     : playerMoney(money),
     playerExperience(0),
-    engineRef(engine)
+    engineRef(engine),
+    window(window)
 {
-    if (!placeHoldTexture.loadFromFile("Assets/wizard attack.png")) {
+    if (!placeHoldTexture.loadFromFile("Assets/Dino.png")) {
         std::cerr << "Error loading texture!" << std::endl;
     }
+    uiRen = new UIRenderer(this, engine, window);
     CreateBase(sf::Vector2f(100, height / 2), 100, false);
     CreateBase(sf::Vector2f(width - 100, height / 2), 100, true);
 }

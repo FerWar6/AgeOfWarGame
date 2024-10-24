@@ -78,7 +78,7 @@ void Unit::RenderObj(sf::RenderWindow& win) {
     if (!markedForDeletion) {
         sf::Vector2f barSize(30, 7);
         float percentage = static_cast<float>(unitHealth) / static_cast<float>(unitMaxHealth);
-        bar.Draw(barSize, sf::Vector2f(GetPos().x, GetPos().y - 50), percentage, win);
+        dataManRef->uiRen->DrawBar(barSize, sf::Vector2f(GetPos().x, GetPos().y - 50), percentage, sf::Color::Red);
     }
 }
 //----------------------------------Enemy Behaviour------------------------------------------
@@ -197,7 +197,8 @@ void Unit::DeleteCheck() {
     }
 }
 void Unit::DeleteUnit() {
-    if (isEnemy) dataManRef->AddMoney(50);
+    if (isEnemy) dataManRef->AddMoney(moneyValue);
+    if (isEnemy) dataManRef->AddExperience(expValue);
     //std::cout << "delete" << std::endl;
     dataManRef->DeleteUnit(this);
 }

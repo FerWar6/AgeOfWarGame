@@ -1,7 +1,7 @@
 #pragma once
 #include "DataManager.h"
-#include "HealthBar.h"
 #include "engine.h"
+#include "UIRenderer.h"
 
 class Object{
 public:
@@ -14,4 +14,5 @@ public:
 private:
 	sf::Vector2f objectPos;
 	sf::Texture objTexture;
+protected:
 };

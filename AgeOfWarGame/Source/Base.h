@@ -19,5 +19,4 @@ public:
 private:
     int baseHealth;
     int maxBaseHealth;
-    HealthBar bar;
 };

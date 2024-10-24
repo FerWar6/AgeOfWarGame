@@ -1,20 +1,16 @@
 #pragma once
 #include "engine.h"
-//#include "Object.h"
-//#include "Unit.h"
-//#include "Base.h"
 #include <vector>
 #include <SFML/Graphics.hpp>
-
 class Unit;
 class Base;
 class Object;
+class UIRenderer;
 
 class DataManager {
 public:
-    DataManager() {};
-    DataManager(int money, int width, int height, Engine* engine);
-    sf::RenderWindow window;
+    DataManager(int money, int width, int height, Engine* engine, sf::RenderWindow& window);
+    sf::RenderWindow& window;
     void CreateEnemy(sf::Vector2f pos, DataManager* man, sf::Texture texture,
         float melCooldown = 0.75, int melDamage = 34, float melSightRange = 100,
         float alSightRange = 75, int maxHealth = 100, float moveSpeed = 1, float spwnTime = 1,
@@ -53,6 +49,8 @@ public:
     Base* playerBase;
 
     Engine* engineRef;
+    UIRenderer* uiRen;
+
     int playerMoney;
     void AddMoney(int moneyAmount);
     int playerExperience;

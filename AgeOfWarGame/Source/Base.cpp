@@ -25,7 +25,7 @@ void Base::RenderObj(sf::RenderWindow& win)
 
     sf::Vector2f barSize(75, 10);
     float percentage = static_cast<float>(baseHealth) / static_cast<float>(maxBaseHealth);
-    bar.Draw(barSize, sf::Vector2f(GetPos().x, GetPos().y - 120), percentage, win);
+    dataManRef->uiRen->DrawBar(barSize, sf::Vector2f(GetPos().x, GetPos().y - 120), percentage, sf::Color::Red);
 }
 void Base::Damage(int damage)
 {
