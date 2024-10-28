@@ -6,10 +6,12 @@ class Unit;
 class Base;
 class Object;
 class UIRenderer;
+class UIManager;
 
 class DataManager {
 public:
     DataManager(int money, int width, int height, Engine* engine, sf::RenderWindow& window);
+    void SetPointers(UIManager* uiMan, UIRenderer* uiRen);
     sf::RenderWindow& window;
     void CreateEnemy(sf::Vector2f pos, DataManager* man, sf::Texture texture,
         float melCooldown = 0.75, int melDamage = 34, float melSightRange = 100,
@@ -49,7 +51,8 @@ public:
     Base* playerBase;
 
     Engine* engineRef;
-    UIRenderer* uiRen;
+    UIRenderer* uiRenRef;
+    UIManager* uiManRef;
 
     int playerMoney;
     void AddMoney(int moneyAmount);
@@ -57,5 +60,9 @@ public:
     void AddExperience(int experienceAmount);
 
     sf::Texture placeHoldTexture;
+
+
+    float inputCooldown = 0.25f;
+    sf::Clock inputCooldownClock;
 private:
 };

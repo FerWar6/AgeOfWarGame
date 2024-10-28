@@ -14,9 +14,14 @@ DataManager::DataManager(int money, int width, int height, Engine* engine, sf::R
     if (!placeHoldTexture.loadFromFile("Assets/Dino.png")) {
         std::cerr << "Error loading texture!" << std::endl;
     }
-    uiRen = new UIRenderer(this, engine, window);
     CreateBase(sf::Vector2f(100, height / 2), 100, false);
     CreateBase(sf::Vector2f(width - 100, height / 2), 100, true);
+}
+
+void DataManager::SetPointers(UIManager* uiMan, UIRenderer* uiRen)
+{
+    uiManRef = uiMan;
+    uiRenRef = uiRen;
 }
 
 

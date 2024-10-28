@@ -78,7 +78,7 @@ void Unit::RenderObj(sf::RenderWindow& win) {
     if (!markedForDeletion) {
         sf::Vector2f barSize(30, 7);
         float percentage = static_cast<float>(unitHealth) / static_cast<float>(unitMaxHealth);
-        dataManRef->uiRen->DrawBar(barSize, sf::Vector2f(GetPos().x, GetPos().y - 50), percentage, sf::Color::Red);
+        dataManRef->uiRenRef->DrawBar(barSize, sf::Vector2f(GetPos().x, GetPos().y - 50), percentage, sf::Color::Red);
     }
 }
 //----------------------------------Enemy Behaviour------------------------------------------

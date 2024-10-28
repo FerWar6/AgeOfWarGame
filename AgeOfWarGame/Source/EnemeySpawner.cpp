@@ -4,9 +4,7 @@
 EnemySpawner::EnemySpawner(float cooldown, DataManager* dataMan)
 	: spawnCooldown(cooldown),
     dataManRef(dataMan)
-{
-
-}
+{}
 void EnemySpawner::UpdateSpawner()
 {
     if (spawnCooldownClock.getElapsedTime().asSeconds() >= spawnCooldown) {

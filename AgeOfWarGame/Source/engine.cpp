@@ -2,14 +2,18 @@
 #include "DataManager.h"
 #include "Object.h"
 #include "Unit.h"
-#include "UIRenderer.h"
 #include "EnemeySpawner.h"
+#include "UIManager.h"
+#include "UIRenderer.h"
 Engine::Engine(int width, int height, const char* windowName)
 {
     gameIsRunning = true;
     window.create(sf::VideoMode(width, height), windowName);
     dataMan = new DataManager(100, width, height, this, window);
+    uiMan = new UIManager(dataMan);
+    uiRen = new UIRenderer(uiMan, dataMan, this, window);
     enemySpawner = new EnemySpawner(4, dataMan);
+    dataMan->SetPointers(uiMan, uiRen);
     Start();
 }
 void Engine::Start() {
@@ -48,14 +52,14 @@ void Engine::RenderGame()
     for (auto& obj : dataMan->GetGameObjects()) {
         obj->RenderObj(window);
     }
-    dataMan->uiRen->Render();
+    uiRen->Render();
 }
 
 void Engine::StopGame(int won)
 {
     gameIsRunning = false;
-    if (won == 1) dataMan->uiRen->winState = 1;
-    if (won == 2) dataMan->uiRen->winState = 2;
+    if (won == 1) uiRen->winState = 1;
+    if (won == 2) uiRen->winState = 2;
 }
 
 sf::RenderWindow& Engine::GetWin()
@@ -66,14 +70,7 @@ sf::RenderWindow& Engine::GetWin()
 float inputCooldown = 0.25f;
 sf::Clock inputCooldownClock;
 void Engine::InputCheck() {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && inputCooldownClock.getElapsedTime().asSeconds() >= inputCooldown) {
-        int unitCost = 25;
-        if (dataMan->playerMoney >= unitCost) {
-            dataMan->CreateGuardian(dataMan->playerBase->frontOfBasePos, dataMan, dataMan->placeHoldTexture);
-            dataMan->playerMoney -= unitCost;
-            inputCooldownClock.restart();
-        }
-    }
+
     //if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && inputCooldownClock.getElapsedTime().asSeconds() >= inputCooldown) {
     //    dataMan->CreateEnemy(sf::Vector2f(1200 - 150, 250), dataMan);
     //    inputCooldownClock.restart();

@@ -1,11 +1,10 @@
 #pragma once
 #include "Object.h"
 #include "engine.h"
-#include "DataManager.h"
 #include <cmath>
 #include <limits>
 
-//class DataManager;
+class DataManager;
 
 class Base : public Object {
 public:

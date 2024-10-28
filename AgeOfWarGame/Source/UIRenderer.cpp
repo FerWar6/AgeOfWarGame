@@ -1,6 +1,9 @@
 #include "UIRenderer.h"
-UIRenderer::UIRenderer(DataManager* dataMan, Engine* engine, sf::RenderWindow& window)
-    : dataManRef(dataMan),
+#include "DataManager.h"
+
+UIRenderer::UIRenderer(UIManager* uiMan, DataManager* dataMan, Engine* engine, sf::RenderWindow& window)
+    : uiManRef(uiMan),
+    dataManRef(dataMan),
     engineRef(engine),
     winState(0),
     window(window)
@@ -9,21 +12,16 @@ UIRenderer::UIRenderer(DataManager* dataMan, Engine* engine, sf::RenderWindow& w
         std::cerr << "Error loading font!" << std::endl;
         return;
     }
-    sprite.setTexture(dataManRef->placeHoldTexture);
-
-    Button* newButton = new Button(sf::Vector2f(20,20), sf::Vector2f(50,50), dataManRef->placeHoldTexture, std::bind(&UIRenderer::OnClick, this));
+    if (!button1Texture.loadFromFile("Assets/UnitsButton.png")) {
+        std::cerr << "Error loading texture!" << std::endl;
+    }
+    Button* newButton = new Button(sf::Vector2f(20,20), sf::Vector2f(50,50), button1Texture, std::bind(&UIManager::SpawnTroop, uiManRef), dataManRef);
     AddButton(newButton);
 
 }
 
 void UIRenderer::Render()
 {
-
-
-    sprite.setPosition(400, 300);
-
-    window.draw(sprite);
-
     DrawText("Money: " + std::to_string(dataManRef->playerMoney), 30, sf::Color::White, 0, true, 25, false);
 
     if (winState == 1) {
@@ -34,7 +32,7 @@ void UIRenderer::Render()
     }
     for (auto& butt : GetButtons()) {
         butt->UpdateButton();
-        butt->RenderButton(window);
+        butt->RenderButton();
     }
 }
 
@@ -84,11 +82,6 @@ void UIRenderer::DrawBar(sf::Vector2f barSize, sf::Vector2f barPos, float barPer
     barFront.setFillColor(barCol);
     window.draw(barFront);
 }
-
-void UIRenderer::OnClick()
-{
-}
-
 std::vector<Button*>& UIRenderer::GetButtons()
 {
     return allButtons;

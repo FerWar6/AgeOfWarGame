@@ -1,4 +1,5 @@
 #include "Base.h"
+#include "DataManager.h"
 
 Base::Base(sf::Vector2f pos, DataManager* man, sf::Texture texture, int health, bool enemy)
 	: Object(pos, man, texture),
@@ -25,7 +26,7 @@ void Base::RenderObj(sf::RenderWindow& win)
 
     sf::Vector2f barSize(75, 10);
     float percentage = static_cast<float>(baseHealth) / static_cast<float>(maxBaseHealth);
-    dataManRef->uiRen->DrawBar(barSize, sf::Vector2f(GetPos().x, GetPos().y - 120), percentage, sf::Color::Red);
+    dataManRef->uiRenRef->DrawBar(barSize, sf::Vector2f(GetPos().x, GetPos().y - 120), percentage, sf::Color::Red);
 }
 void Base::Damage(int damage)
 {

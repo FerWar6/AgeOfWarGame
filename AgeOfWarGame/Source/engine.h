@@ -6,7 +6,8 @@
 
 class DataManager;
 class EnemySpawner;
-
+class UIManager;
+class UIRenderer;
 class Engine {
 public:
 	Engine(int width, int height, const char* windowName);
@@ -22,4 +23,6 @@ private:
 	sf::RenderWindow window;
 	DataManager* dataMan;
 	EnemySpawner* enemySpawner;
+	UIManager* uiMan;
+	UIRenderer* uiRen;
 };
