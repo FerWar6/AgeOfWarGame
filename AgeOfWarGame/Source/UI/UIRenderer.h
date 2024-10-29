@@ -1,13 +1,13 @@
 #pragma once
-#include "engine.h"
-#include "DataManager.h"
-#include "UIManager.h"
-#include "Button.h"
+#include "engine/engine.h"
+#include "Data/DataManager.h"
+#include "UI/UIManager.h"
+#include "UI/UIElements/Button.h"
 
 class UIRenderer
 {
 public:
-	UIRenderer(UIManager* uiMan, DataManager* dataMan, Engine* engine, sf::RenderWindow& window);
+	UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow& window);
 	void Render();
 	void DrawText(std::string inputText, int textSize, 
 		sf::Color textCol, float xpos, float ypos);
@@ -17,13 +17,14 @@ public:
 	void DrawBar(sf::Vector2f barSize, sf::Vector2f barPos, float barPercentage, sf::Color barCol);
 	int winState;
 private:
-
+	void CreateButton(sf::Vector2f pos, sf::Texture& texture, std::function<void()> onClick, GameState state);
 	DataManager* dataManRef;
 	sf::RenderWindow& window;
-	Engine* engineRef;
 	UIManager* uiManRef;
 
 	sf::Texture button1Texture;
+	sf::Texture button2Texture;
+	sf::Texture button3Texture;
 	sf::Font font;
 
 	std::vector<Button*> allButtons;

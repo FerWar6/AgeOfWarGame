@@ -1,12 +1,12 @@
 #pragma once
-#include "engine.h"
-#include "DataManager.h"
-#include "UIManager.h"
+#include "engine/engine.h"
+#include "Data/DataManager.h"
 class UIManager
 {
 public:
 	UIManager(DataManager* dataMan);
 	void SpawnTroop();
+	void StartGame();
 private:
 	DataManager* dataManRef;
 };

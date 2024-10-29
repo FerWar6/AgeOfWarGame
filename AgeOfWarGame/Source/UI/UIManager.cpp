@@ -1,11 +1,9 @@
-#include "UIManager.h"
-#include "Base.h"
+#include "UI/UIManager.h"
+#include "Objects/Base.h"
 
 UIManager::UIManager(DataManager* dataMan)
     : dataManRef(dataMan)
-{
-
-}
+{}
 
 void UIManager::SpawnTroop()
 {
@@ -14,4 +12,9 @@ void UIManager::SpawnTroop()
         dataManRef->CreateGuardian(dataManRef->playerBase->frontOfBasePos, dataManRef, dataManRef->placeHoldTexture);
         dataManRef->playerMoney -= unitCost;
     }
+}
+
+void UIManager::StartGame()
+{
+    dataManRef->SetGameState(GameState::GameScreen);
 }

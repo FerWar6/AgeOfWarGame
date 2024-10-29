@@ -1,10 +1,11 @@
-#include "Button.h"
-#include "DataManager.h"
+#include "UI/UIElements/Button.h"
+#include "Data/DataManager.h"
 
-Button::Button(sf::Vector2f pos, sf::Vector2f size, sf::Texture& texture, std::function<void()> onClick, DataManager* dataMan)
+Button::Button(sf::Vector2f pos, sf::Vector2f size, sf::Texture& texture, std::function<void()> onClick, GameState state, DataManager* dataMan)
     : buttonPos(pos),
     buttonSize(size),
     OnClick(onClick),
+    buttonState(state),
     dataManRef(dataMan)
 {
     buttonSprite.setTexture(texture);
@@ -22,14 +23,15 @@ void Button::RenderButton()
 {
     //std::cerr << IsClicking() << "  " << HoveringOver() << std::endl;
     if (HoveringOver() && IsClicking()) {
-        buttonSprite.setColor(sf::Color(150, 150, 150));
-    }
-    else if (HoveringOver()) {
         buttonSprite.setColor(sf::Color(200, 200, 200));
     }
-    else {
+    else if (HoveringOver()) {
         buttonSprite.setColor(sf::Color(255, 255, 255));
     }
+    else {
+        buttonSprite.setColor(sf::Color(220, 220, 220));
+    }
+
 
 
     buttonSprite.setPosition(buttonPos);

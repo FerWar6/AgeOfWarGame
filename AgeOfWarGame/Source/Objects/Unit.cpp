@@ -1,4 +1,4 @@
-#include "Unit.h"
+#include "Objects/Unit.h"
 
 Unit::Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
     bool enemy, float melCooldown, int melDamage, float melSightRange,
@@ -200,5 +200,5 @@ void Unit::DeleteUnit() {
     if (isEnemy) dataManRef->AddMoney(moneyValue);
     if (isEnemy) dataManRef->AddExperience(expValue);
     //std::cout << "delete" << std::endl;
-    dataManRef->DeleteUnit(this);
+    dataManRef->MarkObjForDel(this);
 }

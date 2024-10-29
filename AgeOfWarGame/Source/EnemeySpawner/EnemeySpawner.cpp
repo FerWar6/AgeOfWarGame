@@ -1,5 +1,5 @@
-#include "EnemeySpawner.h"
-#include "Base.h"
+#include "EnemeySpawner/EnemeySpawner.h"
+#include "Objects/Base.h"
 
 EnemySpawner::EnemySpawner(float cooldown, DataManager* dataMan)
 	: spawnCooldown(cooldown),

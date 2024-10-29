@@ -1,8 +1,8 @@
 #pragma once
-#include "Object.h"
-#include "engine.h"
-#include "Base.h"
-#include "DataManager.h"
+#include "Engine/engine.h"
+#include "Data/DataManager.h"
+#include "Objects/Object.h"
+#include "Objects/Base.h"
 #include <cmath>
 #include <limits>
 

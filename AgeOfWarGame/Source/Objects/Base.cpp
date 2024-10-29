@@ -1,5 +1,5 @@
-#include "Base.h"
-#include "DataManager.h"
+#include "Data/DataManager.h"
+#include "Objects/Base.h"
 
 Base::Base(sf::Vector2f pos, DataManager* man, sf::Texture texture, int health, bool enemy)
 	: Object(pos, man, texture),
@@ -30,13 +30,5 @@ void Base::RenderObj(sf::RenderWindow& win)
 }
 void Base::Damage(int damage)
 {
-    baseHealth -= damage;
-    if (baseHealth <= 0) {
-        isEnemy ? EndGame(1) : EndGame(2);
-    }
-}
-void Base::EndGame(int won)
-{
-    dataManRef->engineRef->StopGame(won);
-    isEnemy ? std::cout << "You Won" : std::cout << "You Lost";
+    dataManRef->DamageBase(this, damage);
 }

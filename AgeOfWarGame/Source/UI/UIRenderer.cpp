@@ -1,10 +1,9 @@
-#include "UIRenderer.h"
-#include "DataManager.h"
+#include "UI/UIRenderer.h"
+#include "Data/DataManager.h"
 
-UIRenderer::UIRenderer(UIManager* uiMan, DataManager* dataMan, Engine* engine, sf::RenderWindow& window)
+UIRenderer::UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow& window)
     : uiManRef(uiMan),
     dataManRef(dataMan),
-    engineRef(engine),
     winState(0),
     window(window)
 {
@@ -12,28 +11,47 @@ UIRenderer::UIRenderer(UIManager* uiMan, DataManager* dataMan, Engine* engine, s
         std::cerr << "Error loading font!" << std::endl;
         return;
     }
-    if (!button1Texture.loadFromFile("Assets/UnitsButton.png")) {
-        std::cerr << "Error loading texture!" << std::endl;
-    }
-    Button* newButton = new Button(sf::Vector2f(20,20), sf::Vector2f(50,50), button1Texture, std::bind(&UIManager::SpawnTroop, uiManRef), dataManRef);
-    AddButton(newButton);
-
+    //Spawning troop button
+    if (!button1Texture.loadFromFile("Assets/UnitsButton2.png")) std::cerr << "Error loading texture!" << std::endl; 
+    CreateButton(sf::Vector2f(20, 20), button1Texture, std::bind(&UIManager::SpawnTroop, uiManRef), GameState::GameScreen);
+    //Start button
+    if (!button2Texture.loadFromFile("Assets/StartButton.png")) std::cerr << "Error loading texture!" << std::endl;
+    CreateButton(sf::Vector2f(50, 50), button2Texture, std::bind(&UIManager::StartGame, uiManRef), GameState::StartScreen);
+    //Restart button
+    if (!button3Texture.loadFromFile("Assets/RestartButton.png")) std::cerr << "Error loading texture!" << std::endl;
+    CreateButton(sf::Vector2f(50, 50), button3Texture, std::bind(&UIManager::StartGame, uiManRef), GameState::DeathScreen);
 }
 
 void UIRenderer::Render()
 {
-    DrawText("Money: " + std::to_string(dataManRef->playerMoney), 30, sf::Color::White, 0, true, 25, false);
+    switch (dataManRef->GetGameState()) {
+    case GameState::StartScreen:
+        break;
 
-    if (winState == 1) {
-        DrawText("YOU WIN!", 100, sf::Color::Green, 0, true, 0, true);
+    case GameState::GameScreen:
+
+        DrawText("Money: " + std::to_string(dataManRef->playerMoney), 30, sf::Color::White, 0, true, 25, false);
+
+        if (winState == 1) {
+            DrawText("YOU WIN!", 100, sf::Color::Green, 0, true, 0, true);
+        }
+        if (winState == 2) {
+            DrawText("YOU LOSE :(", 100, sf::Color::Red, 0, true, 0, true);
+        }
+        break;
+
+    case GameState::DeathScreen:
+        break;
     }
-    if (winState == 2) {
-        DrawText("YOU LOSE :(", 100, sf::Color::Red, 0, true, 0, true);
-    }
+
     for (auto& butt : GetButtons()) {
-        butt->UpdateButton();
-        butt->RenderButton();
+        if (dataManRef->GetGameState() == butt->buttonState) {
+            butt->UpdateButton();
+            butt->RenderButton();
+        }
     }
+
+
 }
 
 void UIRenderer::DrawText(std::string inputText, int textSize, sf::Color textCol, float xpos, float ypos)
@@ -81,6 +99,11 @@ void UIRenderer::DrawBar(sf::Vector2f barSize, sf::Vector2f barPos, float barPer
     barFront.setPosition(barPos);
     barFront.setFillColor(barCol);
     window.draw(barFront);
+}
+void UIRenderer::CreateButton(sf::Vector2f pos, sf::Texture& texture, std::function<void()> onClick, GameState state)
+{
+    Button* newButton = new Button(pos, sf::Vector2f(0, 0), texture, onClick, state, dataManRef);
+    AddButton(newButton);
 }
 std::vector<Button*>& UIRenderer::GetButtons()
 {

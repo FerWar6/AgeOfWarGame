@@ -1,4 +1,4 @@
-#include "Object.h"
+#include "Objects/Object.h"
 
 Object::Object(sf::Vector2f pos, DataManager* dataMan, sf::Texture texture)
     : objectPos(pos),

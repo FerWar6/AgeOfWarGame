@@ -1,7 +1,7 @@
 #pragma once
-#include "DataManager.h"
-#include "engine.h"
-#include "UIRenderer.h"
+#include "Data/DataManager.h"
+#include "engine/engine.h"
+#include "UI/UIRenderer.h"
 
 class Object{
 public:
