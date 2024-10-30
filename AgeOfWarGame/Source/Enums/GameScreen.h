@@ -1,7 +1,7 @@
 #pragma once
 
-enum class GameState {
+enum class GameScreen {
     StartScreen,
     GameScreen,
-    DeathScreen
+    EndScreen
 };

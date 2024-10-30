@@ -4,38 +4,35 @@
 #include "Objects/Base.h"
 #include <algorithm>
 
+// Constructor
 DataManager::DataManager(Engine* engine, sf::RenderWindow& window)
     : playerMoney(100),
     playerExperience(0),
+    dataCleared(false),
     engineRef(engine),
     window(window)
+{}
+
+// Game State Management
+void DataManager::SetGameScreen(GameScreen state)
 {
-    if (!placeHoldTexture.loadFromFile("Assets/Background.png")) {
-        std::cerr << "Error loading texture!" << std::endl;
-    }
+    engineRef->SetGameScreen(state);
 }
 
-void DataManager::SetPointers(UIManager* uiMan, UIRenderer* uiRen)
+GameScreen DataManager::GetGameScreen()
 {
+    return engineRef->GetGameScreen();
+}
+
+// UI Pointer Setup
+void DataManager::SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen)
+{
+    gameLdrRef = loader;
     uiManRef = uiMan;
     uiRenRef = uiRen;
 }
 
-void DataManager::SetGameState(GameState state)
-{
-    engineRef->SetGameState(state);
-}
-
-GameState DataManager::GetGameState()
-{
-    return engineRef->GetGameState();
-}
-
-void DataManager::SetBase(Base* base)
-{
-    base->isEnemy ? enemyBase = base : playerBase = base;
-}
-
+// Game Object Management
 void DataManager::AddGameObject(Object* obj)
 {
     gameObjects.push_back(obj);
@@ -46,6 +43,48 @@ std::vector<Object*>& DataManager::GetGameObjects()
     return gameObjects;
 }
 
+void DataManager::MarkObjForAdd(Object* obj)
+{
+    markedForAddition.push_back(obj);
+
+}
+
+void DataManager::MarkObjForDel(Object* obj)
+{
+    markedForDeletion.push_back(obj);
+}
+
+void DataManager::DeleteGameObject(Object* obj) {
+    auto& objects = GetGameObjects();
+
+    auto it = std::find(objects.begin(), objects.end(), obj);
+    if (it != objects.end()) {
+        objects.erase(it);
+        delete obj;
+    }
+}
+
+void DataManager::UpdateGameObjVector()
+{
+    if (!markedForAddition.empty()) {
+        gameObjects.insert(gameObjects.end(), markedForAddition.begin(), markedForAddition.end());
+        markedForAddition.clear();
+    }
+
+    if (!markedForDeletion.empty()) {
+        for (Object* obj : markedForDeletion) {
+            auto it = std::find(gameObjects.begin(), gameObjects.end(), obj);
+            if (it != gameObjects.end()) {
+                gameObjects.erase(it);
+            }
+            delete obj;
+            obj = nullptr;
+        }
+        markedForDeletion.clear();
+    }
+}
+
+// Retrieve Specific Game Objects
 std::vector<Unit*>& DataManager::GetEnemies() {
     static std::vector<Unit*> enemies;
 
@@ -78,147 +117,20 @@ std::vector<Unit*>& DataManager::GetGuardians() {
     return guardians;
 }
 
-
-void DataManager::AddDeleteObjs()
+// Base and Unit Management
+void DataManager::SetBase(Base* base)
 {
-    // Add new objects
-    if (!markedForAddition.empty()) {
-        gameObjects.insert(gameObjects.end(), markedForAddition.begin(), markedForAddition.end());
-        markedForAddition.clear();
-    }
+    base->isEnemy ? enemyBase = base : playerBase = base;
+}
 
-    // Delete marked objects
-    if (!markedForDeletion.empty()) {
-        for (Object* obj : markedForDeletion) {
-            // Check if object exists in gameObjects before removing
-            auto it = std::find(gameObjects.begin(), gameObjects.end(), obj);
-            if (it != gameObjects.end()) {
-                gameObjects.erase(it);
-            }
-            delete obj;  // Ensure the object is deleted only once
-        }
-        markedForDeletion.clear();
+void DataManager::DamageBase(Base* targetBase, int damage)
+{
+    targetBase->AddHealth(-damage);
+    if (targetBase->GetHealth() <= 0) {
+        targetBase->isEnemy ? EndGame(true) : EndGame(false);
     }
 }
 
-
-void DataManager::DamageBase(Base* targerBase, int damage)
-{
-    targerBase->baseHealth -= damage;
-    if (targerBase->baseHealth <= 0) {
-        targerBase->isEnemy ? EndGame(true) : EndGame(false);
-    }
-}
-
-void DataManager::AddMoney(int moneyAmount)
-{
-    playerMoney += moneyAmount;
-}
-
-void DataManager::AddExperience(int experienceAmount)
-{
-    playerExperience += experienceAmount;
-}
-
-void DataManager::EndGame(bool won)
-{
-    SetGameState(GameState::DeathScreen);
-    if(won) std::cerr << "YOU WON!" << std::endl;
-    if(!won) std::cerr << "YOU LOST!" << std::endl;
-    ClearGameData();
-
-}
-
-//void DataManager::ClearGameData() {
-//    // Delete objects marked for addition
-//    for (Object* obj : markedForAddition) {
-//        delete obj; // Only delete if not nullptr
-//    }
-//    markedForAddition.clear();
-//
-//    // Delete objects in gameObjects
-//    for (Object* obj : gameObjects) {
-//        delete obj; // Only delete if not nullptr
-//    }
-//    gameObjects.clear();
-//
-//    // Delete objects marked for deletion
-//    for (Object* obj : markedForDeletion) {
-//        delete obj; // Only delete if not nullptr
-//    }
-//    markedForDeletion.clear();
-//}
-void DataManager::ClearGameData() {
-    // Create a temporary vector to hold all objects to be deleted
-    std::vector<Object*> toDelete;
-
-    // Move objects marked for addition into the temporary vector
-    toDelete.insert(toDelete.end(), markedForAddition.begin(), markedForAddition.end());
-    markedForAddition.clear();
-
-    // Move objects in gameObjects into the temporary vector
-    toDelete.insert(toDelete.end(), gameObjects.begin(), gameObjects.end());
-    gameObjects.clear();
-
-    // Move objects marked for deletion into the temporary vector
-    toDelete.insert(toDelete.end(), markedForDeletion.begin(), markedForDeletion.end());
-    markedForDeletion.clear();
-
-    // Delete all objects in the temporary vector
-    for (Object* obj : toDelete) {
-        delete obj; // Safely delete each object
-    }
-
-    // Clear the temporary vector (not strictly necessary, but good practice)
-    toDelete.clear();
-}
-
-
-void DataManager::CreateEnemy(sf::Vector2f pos, DataManager* man, 
-    sf::Texture texture, float melCooldown, int melDamage, 
-    float melSightRange, float alSightRange, int maxHealth, float moveSpeed, 
-    float spwnTime, int money, int exp)
-{
-    Unit* newEnemy = new Unit(pos, man, texture, true, melCooldown, melDamage,
-        melSightRange, alSightRange, maxHealth, moveSpeed, spwnTime, money, exp);
-    MarkObjForAdd(newEnemy);
-}
-
-void DataManager::CreateGuardian(sf::Vector2f pos, DataManager* man,
-    sf::Texture texture, float melCooldown, int melDamage,
-    float melSightRange, float alSightRange, int maxHealth, float moveSpeed,
-    float spwnTime, int money, int exp)
-{
-    Unit* newGuardian = new Unit(pos, man, texture, false, melCooldown, melDamage,
-        melSightRange, alSightRange, maxHealth, moveSpeed, spwnTime, money, exp);
-    MarkObjForAdd(newGuardian);
-}
-
-void DataManager::MarkObjForAdd(Object* obj)
-{
-    markedForAddition.push_back(obj);
-}
-void DataManager::MarkObjForDel(Object* obj)
-{
-    markedForDeletion.push_back(obj);
-}
-void DataManager::DeleteGameObject(Object* obj) {
-    if (obj == nullptr) return;  // Guard against nullptr
-    auto& objects = GetGameObjects();
-
-    // Only delete if it exists in the gameObjects
-    auto it = std::find(objects.begin(), objects.end(), obj);
-    if (it != objects.end()) {
-        // Remove from gameObjects
-        objects.erase(it);
-        delete obj;  // Only delete after confirming it's removed
-    }
-}
-
-template<typename T>
-void RemoveItemFromList(std::vector<T>& list, T item) {
-    list.erase(std::remove(list.begin(), list.end(), item), list.end());
-}
 void DataManager::DamageUnit(Unit* markedUnit, int damage) {
     auto& objs = GetGameObjects();
 
@@ -229,4 +141,81 @@ void DataManager::DamageUnit(Unit* markedUnit, int damage) {
             unit->Damage(damage);
         }
     }
+}
+
+// Game End and Data Clearing
+void DataManager::EndGame(bool won)
+{
+    SetGameScreen(GameScreen::EndScreen);
+    if (won) uiRenRef->winText = "You Won!";
+    if (!won) uiRenRef->winText = "You Lost :(";
+}
+
+
+void DataManager::ClearGameData() {
+
+    for (Object* obj : markedForAddition) {
+        delete obj;
+        obj = nullptr;
+    }
+    markedForAddition.clear();
+
+    std::vector<Object*> baseObjects;
+    for (Object* obj : gameObjects) {
+        if (dynamic_cast<Base*>(obj)) {
+            baseObjects.push_back(obj); // Keep base objects
+        }
+        else {
+            delete obj; // Delete non-base objects
+            obj = nullptr;
+        }
+    }
+
+    gameObjects = std::move(baseObjects); // Retain only base objects in gameObjects
+
+    for (Object* obj : markedForDeletion) {
+        delete obj;
+        obj = nullptr;
+    }
+    markedForDeletion.clear();
+
+    dataCleared = true;
+}
+
+
+int DataManager::GetPlayerMoney()
+{
+    return playerMoney;
+}
+
+int DataManager::GetPlayerExperience()
+{
+    return playerExperience;
+}
+
+void DataManager::SetPlayerMoney(int money)
+{
+    playerMoney = money;
+}
+
+void DataManager::SetPlayerExperience(int exp)
+{
+    playerExperience = exp;
+}
+
+void DataManager::AddPlayerMoney(int money)
+{
+    playerMoney += money;
+}
+
+void DataManager::AddPlayerExperience(int exp)
+{
+    playerExperience += exp;
+}
+
+
+
+template<typename T>
+void RemoveItemFromList(std::vector<T>& list, T item) {
+    list.erase(std::remove(list.begin(), list.end(), item), list.end());
 }

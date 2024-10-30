@@ -1,73 +1,90 @@
 #pragma once
-#include "Engine/engine.h"
 
+#include "Engine/engine.h"
 #include <vector>
 #include <SFML/Graphics.hpp>
 
+// Forward declarations
 class Unit;
 class Base;
 class Object;
+class GameLoader;
 class UIRenderer;
 class UIManager;
 
 class DataManager {
 public:
+    // Constructor
     DataManager(Engine* engine, sf::RenderWindow& window);
-    void SetPointers(UIManager* uiMan, UIRenderer* uiRen);
 
-    void SetGameState(GameState state);
-    GameState GetGameState();
+    // Public Member Variables (to remain public as specified)
     sf::RenderWindow& window;
-    void CreateEnemy(sf::Vector2f pos, DataManager* man, sf::Texture texture,
-        float melCooldown = 0.75, int melDamage = 34, float melSightRange = 100,
-        float alSightRange = 75, int maxHealth = 100, float moveSpeed = 1, float spwnTime = 1,
-        int money = 50, int exp = 50);
 
-    void CreateGuardian(sf::Vector2f pos, DataManager* man, sf::Texture texture,
-        float melCooldown = 0.75, int melDamage = 34, float melSightRange = 100,
-        float alSightRange = 75, int maxHealth = 100, float moveSpeed = 1, float spwnTime = 1,
-        int money = 50, int exp = 50);
+    // Game State Management
+    void SetGameScreen(GameScreen state);
+    GameScreen GetGameScreen();
 
-    void SetBase(Base* base);
+    // UI Pointer Setup
+    void SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen);
+
+    // Game Object Management
     void AddGameObject(Object* obj);
-
+    std::vector<Object*>& GetGameObjects();
     void MarkObjForAdd(Object* obj);
     void MarkObjForDel(Object* obj);
     void DeleteGameObject(Object* obj);
+    void UpdateGameObjVector();
+
+    // Retrieve Specific Game Objects
+    std::vector<Unit*>& GetEnemies();
+    std::vector<Unit*>& GetGuardians();
+
+    // Base References
+    Base* enemyBase;
+    Base* playerBase;
+
+    // Base and Unit Management
+    void SetBase(Base* base);
+    void DamageBase(Base* targetBase, int damage);
     void DamageUnit(Unit* markedUnit, int damage);
 
+    // Game End and Data Clearing
+    void EndGame(bool won);
+    void ClearGameData();
+    bool dataCleared;
+    // Public Utility Methods
     template<typename T>
     void RemoveItemFromList(std::vector<T>& list, T item) {
         list.erase(std::remove(list.begin(), list.end(), item), list.end());
     }
-    std::vector<Object*>& GetGameObjects();
-    std::vector<Unit*>& GetEnemies();
-    std::vector<Unit*>& GetGuardians();
-    
+    // Engine and UI References
+    Engine* engineRef;
+    GameLoader* gameLdrRef;
+    UIRenderer* uiRenRef;
+    UIManager* uiManRef;
+
+    // Resource and Timing Management
+    float inputCooldown = 0.25f;
+    sf::Clock inputCooldownClock;
+
+    // Object Management Vectors
     std::vector<Object*> gameObjects;
     std::vector<Object*> markedForAddition;
     std::vector<Object*> markedForDeletion;
 
-    void AddDeleteObjs();
-    Base* enemyBase;
-    Base* playerBase;
-    void DamageBase(Base* targerBase, int damage);
-
-    Engine* engineRef;
-    UIRenderer* uiRenRef;
-    UIManager* uiManRef;
-
-    int playerMoney;
-    void AddMoney(int moneyAmount);
-    int playerExperience;
-    void AddExperience(int experienceAmount);
-
-    void EndGame(bool won);
-    void ClearGameData();
-
     sf::Texture placeHoldTexture;
 
-    float inputCooldown = 0.25f;
-    sf::Clock inputCooldownClock;
+    int GetPlayerMoney();
+    int GetPlayerExperience();
+
+    void SetPlayerMoney(int money);
+    void SetPlayerExperience(int exp);
+
+    void AddPlayerMoney(int money);
+    void AddPlayerExperience(int exp);
 private:
+
+    int playerMoney;
+    int playerExperience;
+
 };

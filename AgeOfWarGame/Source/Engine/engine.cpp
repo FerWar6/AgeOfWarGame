@@ -6,7 +6,7 @@
 #include "UI/UIManager.h"
 #include "UI/UIRenderer.h"
 Engine::Engine(int width, int height, const char* windowName)
-    : currentGameState(GameState::StartScreen)
+    : currentGameScreen(GameScreen::StartScreen)
 {
     gamePaused = false;
     window.create(sf::VideoMode(width, height), windowName);
@@ -15,7 +15,7 @@ Engine::Engine(int width, int height, const char* windowName)
     uiMan = new UIManager(dataMan);
     uiRen = new UIRenderer(uiMan, dataMan, window);
     enemySpawner = new EnemySpawner(4, dataMan);
-    dataMan->SetPointers(uiMan, uiRen);
+    dataMan->SetPointers(gameLdr, uiMan, uiRen);
     Start();
 }
 void Engine::Start() {
@@ -37,24 +37,24 @@ void Engine::UpdateEngine()
 void Engine::UpdateGame()
 {
     if (!dataMan->markedForAddition.empty() || !dataMan->markedForDeletion.empty()) {
-        dataMan->AddDeleteObjs();
+        dataMan->UpdateGameObjVector();
     }
-    switch (currentGameState) {
-    case GameState::StartScreen:
-  
+    switch (currentGameScreen) {
+    case GameScreen::StartScreen:
         break;
 
-    case GameState::GameScreen:
+    case GameScreen::GameScreen:
         enemySpawner->UpdateSpawner();
         if (!dataMan->gameObjects.empty()) {
             for (auto& obj : dataMan->GetGameObjects()) {
                 obj->UpdateObj();
             }
         }
+        if (dataMan->dataCleared) dataMan->dataCleared = false;
         break;
 
-    case GameState::DeathScreen:
-        
+    case GameScreen::EndScreen:
+        if (!dataMan->dataCleared) dataMan->ClearGameData();
         break;
     }
 }
@@ -67,16 +67,16 @@ void Engine::RenderGame() {
     testSprite.setTexture(dataMan->placeHoldTexture);
     window.draw(testSprite);
 
-    switch (currentGameState) {
-    case GameState::StartScreen:
+    switch (currentGameScreen) {
+    case GameScreen::StartScreen:
         RenderStartScreen();
         break;
 
-    case GameState::GameScreen:
+    case GameScreen::GameScreen:
         RenderGameScreen();
         break;
 
-    case GameState::DeathScreen:
+    case GameScreen::EndScreen:
         RenderDeathScreen();
         break;
     }
@@ -84,14 +84,14 @@ void Engine::RenderGame() {
     window.display();
 }
 
-void Engine::SetGameState(GameState state)
+void Engine::SetGameScreen(GameScreen state)
 {
-    currentGameState = state;
+    currentGameScreen = state;
 }
 
-GameState Engine::GetGameState()
+GameScreen Engine::GetGameScreen()
 {
-    return currentGameState;
+    return currentGameScreen;
 }
 
 void Engine::RenderStartScreen()

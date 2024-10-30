@@ -31,7 +31,7 @@
     <ClInclude Include="source\Engine\engine.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="source\Enums\GameState.h">
+    <ClInclude Include="source\Enums\GameScreen.h">
       <Filter>Enums</Filter>
     </ClInclude>
     <ClInclude Include="Source\Data\DataManager.h">
@@ -56,6 +56,8 @@
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enums\Difficulty.h" />
+    <ClInclude Include="Source\Enums\Age.h" />
+    <ClInclude Include="Source\Enums\UnitType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\EnemeySpawner\EnemeySpawner.cpp">

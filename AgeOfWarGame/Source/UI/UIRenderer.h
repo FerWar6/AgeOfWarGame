@@ -10,24 +10,29 @@ public:
 	UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow& window);
 	void Render();
 	void DrawText(std::string inputText, int textSize, 
-		sf::Color textCol, float xpos, float ypos);
-	void DrawText(std::string inputText, int textSize,
-		sf::Color textCol, float xpos, bool isXCentered, float ypos, 
-		bool isYCentered);
-	void DrawBar(sf::Vector2f barSize, sf::Vector2f barPos, float barPercentage, sf::Color barCol);
-	int winState;
+		sf::Color textCol, sf::Vector2f pos, bool centerPos = true);
+	void DrawBar(sf::Vector2f barSize, sf::Vector2f barPos, float barPercentage, 
+		sf::Color barCol);
+	void DrawMenu();
+	sf::String winText;
 private:
-	void CreateButton(sf::Vector2f pos, sf::Texture& texture, std::function<void()> onClick, GameState state);
+	sf::Vector2f menuAncorPoint;
+	void CreateButton(sf::Vector2f pos, sf::String path, std::function<void()> onClick, GameScreen state);
 	DataManager* dataManRef;
 	sf::RenderWindow& window;
 	UIManager* uiManRef;
 
-	sf::Texture button1Texture;
-	sf::Texture button2Texture;
-	sf::Texture button3Texture;
 	sf::Font font;
-
 	std::vector<Button*> allButtons;
 	std::vector<Button*>& GetButtons();
 	void AddButton(Button* button);
+
+	float GetCentredXPos();
+	float GetCentredYPos();
+	sf::Vector2f GetCentredPos();
+
+	sf::Texture menuBorderTexture;
+	sf::Texture menuMiddleTexture;
+	sf::Sprite menuBorderSprite;
+	sf::Sprite menuMiddleSprite;
 };

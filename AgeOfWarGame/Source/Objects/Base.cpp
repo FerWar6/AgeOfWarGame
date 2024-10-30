@@ -32,3 +32,19 @@ void Base::Damage(int damage)
 {
     dataManRef->DamageBase(this, damage);
 }
+
+int Base::GetHealth()
+{
+    return baseHealth;
+}
+
+void Base::SetHealth(int health)
+{
+    maxBaseHealth = health;
+    baseHealth = health;
+}
+
+void Base::AddHealth(int health)
+{
+    baseHealth += health;
+}

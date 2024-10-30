@@ -4,8 +4,10 @@
 #include <vector>
 #include <algorithm>
 
-#include "Enums/GameState.h"
+#include "Enums/GameScreen.h"
 #include "Enums/Difficulty.h"
+#include "Enums/UnitType.h"
+#include "Enums/Age.h"
 
 class DataManager;
 class EnemySpawner;
@@ -20,8 +22,8 @@ public:
 	void UpdateEngine();
 	void UpdateGame();
 	void RenderGame();
-	void SetGameState(GameState state);
-	GameState GetGameState();
+	void SetGameScreen(GameScreen state);
+	GameScreen GetGameScreen();
 
 private:
 	void RenderStartScreen();
@@ -35,5 +37,5 @@ private:
 	EnemySpawner* enemySpawner;
 	UIManager* uiMan;
 	UIRenderer* uiRen;
-	GameState currentGameState;
+	GameScreen currentGameScreen;
 };

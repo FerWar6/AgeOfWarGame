@@ -12,9 +12,12 @@ public:
     void UpdateObj() override;
     void RenderObj(sf::RenderWindow& win) override;
     void Damage(int damage);
+    int GetHealth();
+    void SetHealth(int health);
+    void AddHealth(int health);
     bool isEnemy;
-    int baseHealth;
     sf::Vector2f frontOfBasePos;
 private:
+    int baseHealth;
     int maxBaseHealth;
 };

@@ -1,6 +1,6 @@
 #include "Objects/Unit.h"
 
-Unit::Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
+Unit::Unit(sf::Vector2f pos, DataManager* man, sf::String path,
     bool enemy, float melCooldown, int melDamage, float melSightRange,
     float rangCooldown, int rangDamage, float rangSightRange,
     float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
@@ -22,31 +22,13 @@ Unit::Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
     expValue(exp),
     timeBeforeDeath(0.05f)
 {
-    unitHealth = maxHealth;
-    if (isEnemy) movementSpeed = -movementSpeed;
-    markedForDeletion = false;
-}
-Unit::Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
-    bool enemy, float melCooldown, int melDamage, float melSightRange,
-    float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
-    int money, int exp)
-    : Object(pos, man, texture),
-    isEnemy(enemy),
-    meleeAttackCoolDown(melCooldown),
-    meleeDamage(melDamage),
-    meleeSightRange(melSightRange),
-    isRanged(false),
-    rangedAttackCoolDown(0),
-    rangedDamage(0),
-    rangedSightRange(0),
-    allySightRange(alSightRange),
-    unitMaxHealth(maxHealth),
-    movementSpeed(moveSpeed),
-    spawnTime(spwnTime),
-    moneyValue(money),
-    expValue(exp),
-    timeBeforeDeath(0.05f)
-{
+    if (!texture.loadFromFile(path)) {
+        std::cerr << "Error loading unit texture!" << std::endl;
+    }
+    unitSprite.setTexture(texture);
+    if(isEnemy) unitSprite.setScale(-1.f, 1.f);
+
+
     unitHealth = maxHealth;
     if (isEnemy) movementSpeed = -movementSpeed;
     markedForDeletion = false;
@@ -66,15 +48,21 @@ void Unit::UpdateObj()
     DeleteCheck();
 }
 void Unit::RenderObj(sf::RenderWindow& win) {
-
-    sf::Vector2f UnitSize(25, 50);
-    sf::Vector2f centerPos = sf::Vector2f(GetPos().x - UnitSize.x / 2, GetPos().y - UnitSize.y / 2);
-    sf::RectangleShape unitShape(UnitSize);
-    unitShape.setPosition(centerPos);
-    sf::Color col = isEnemy ? col = sf::Color::Red : sf::Color::Green;
-    unitShape.setFillColor(col);
-    win.draw(unitShape);
-
+    if (unitSprite.getTexture() != nullptr) {
+        sf::FloatRect unitBounds = unitSprite.getLocalBounds();
+        unitSprite.setOrigin(unitBounds.width / 2, unitBounds.height / 2);
+        unitSprite.setPosition(GetPos());
+        win.draw(unitSprite);
+    }
+    else {
+        sf::Vector2f UnitSize(25, 50);
+        sf::Vector2f centerPos = sf::Vector2f(GetPos().x - UnitSize.x / 2, GetPos().y - UnitSize.y / 2);
+        sf::RectangleShape unitShape(UnitSize);
+        unitShape.setPosition(centerPos);
+        sf::Color col = isEnemy ? col = sf::Color::Red : sf::Color::Green;
+        unitShape.setFillColor(col);
+        win.draw(unitShape);
+    }
     if (!markedForDeletion) {
         sf::Vector2f barSize(30, 7);
         float percentage = static_cast<float>(unitHealth) / static_cast<float>(unitMaxHealth);
@@ -197,8 +185,11 @@ void Unit::DeleteCheck() {
     }
 }
 void Unit::DeleteUnit() {
-    if (isEnemy) dataManRef->AddMoney(moneyValue);
-    if (isEnemy) dataManRef->AddExperience(expValue);
-    //std::cout << "delete" << std::endl;
+
+    if (isEnemy) {
+        dataManRef->AddPlayerMoney(moneyValue);
+        dataManRef->AddPlayerExperience(expValue);
+    }
+
     dataManRef->MarkObjForDel(this);
 }

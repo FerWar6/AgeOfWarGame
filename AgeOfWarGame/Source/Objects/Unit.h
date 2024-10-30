@@ -9,13 +9,9 @@
 class Unit : public Object{
 public:
     //Unit Constructor
-    Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
+    Unit(sf::Vector2f pos, DataManager* man, sf::String path,
         bool enemy, float melCooldown, int melDamage, float melSightRange,
         float rangCooldown, int rangDamage, float rangSightRange,
-        float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
-        int money, int exp);
-    Unit(sf::Vector2f pos, DataManager* man, sf::Texture texture,
-        bool enemy, float melCooldown, int melDamage, float melSightRange,
         float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
         int money, int exp);
     //Object Overrides
@@ -40,7 +36,8 @@ public:
 
     bool isEnemy;
 private:
-
+    sf::Texture texture;
+    sf::Sprite unitSprite;
     sf::Clock meleeAttackCooldownClock;
     float meleeAttackCoolDown;
     int meleeDamage;
