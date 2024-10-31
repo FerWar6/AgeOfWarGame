@@ -1,9 +1,8 @@
 #include "Objects/Object.h"
 
-Object::Object(sf::Vector2f pos, DataManager* dataMan, sf::Texture texture)
+Object::Object(sf::Vector2f pos, DataManager* dataMan)
     : objectPos(pos),
-    dataManRef(dataMan),
-    objTexture(texture)
+    dataManRef(dataMan)
 {}
 
 void Object::UpdateObj(){

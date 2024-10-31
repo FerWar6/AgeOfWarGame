@@ -2,7 +2,7 @@
 #include "Objects/Base.h"
 
 Base::Base(sf::Vector2f pos, DataManager* man, sf::Texture texture, int health, bool enemy)
-	: Object(pos, man, texture),
+	: Object(pos, man),
 	maxBaseHealth(health),
 	isEnemy(enemy)
 {

@@ -1,23 +1,35 @@
 #include "UI/UIRenderer.h"
-#include "Data/DataManager.h"
 
 UIRenderer::UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow& window)
     : uiManRef(uiMan),
     dataManRef(dataMan),
-    window(window)
+    window(window),
+    queue(sf::Vector2f(window.getSize().x / 4, 0), 
+        sf::Vector2f(window.getSize().x - (window.getSize().x / 5 * 2 + window.getSize().x / 4), 100 / 2), dataMan)
 {
-    menuAncorPoint = sf::Vector2f(GetCentredXPos(), 0);
-    if (!menuMiddleTexture.loadFromFile("Assets/menuMiddle.png")) std::cerr << "Error loading menu Texture!" << std::endl;
+    //float windowWidth = window.getSize().x;
+    //float menuHeight = menuMiddleSprite.getGlobalBounds().height;
+
+    //sf::Vector2f queuePos(windowWidth / 4, 0);
+    //sf::Vector2f queueSize();
+
+    //queue = Queue(queuePos, queueSize);
+    if (!menuMiddleTexture.loadFromFile("Assets/menuMiddle2.png")) std::cerr << "Error loading menu Texture!" << std::endl;
     menuMiddleSprite.setTexture(menuMiddleTexture);
-    if (!menuBorderTexture.loadFromFile("Assets/menuBorder.png")) std::cerr << "Error loading menu Texture!" << std::endl;
-    menuBorderSprite.setTexture(menuBorderTexture);
+    if (!menuCornerTexture.loadFromFile("Assets/menuCorner2.png")) std::cerr << "Error loading menu Texture!" << std::endl;
+    menuCornerSprite.setTexture(menuCornerTexture);
+
+    menuCornerThickness = menuCornerSprite.getGlobalBounds().width;
+    menuMiddleThickness = menuMiddleSprite.getGlobalBounds().width;
+
+
     if (!font.loadFromFile("Assets/font.ttf")) {std::cerr << "Error loading font!" << std::endl;
         std::cerr << "Error loading font!" << std::endl;
         return;
     }
     //Spawning melee button
-    sf::Vector2f ButtonPos1(menuAncorPoint.x + 50, menuAncorPoint.y + 50);
-    sf::Vector2f ButtonPos2(menuAncorPoint.x + 125, menuAncorPoint.y + 50);
+    sf::Vector2f ButtonPos1(sf::Vector2f(900, 50));
+    sf::Vector2f ButtonPos2(sf::Vector2f(975, 50));
     CreateButton(ButtonPos1, "Assets/Age1MeleeUnitButton.png", std::bind(&UIManager::SpawnTroop, uiManRef, Age::Arcade, UnitType::Melee), GameScreen::GameScreen);
     //Spawning ranged button
     CreateButton(ButtonPos2, "Assets/Age1RangedUnitButton.png", std::bind(&UIManager::SpawnTroop, uiManRef, Age::Arcade, UnitType::Ranged), GameScreen::GameScreen);
@@ -38,8 +50,8 @@ void UIRenderer::Render()
 
     case GameScreen::GameScreen:
 
-        DrawText("Money: " + std::to_string(dataManRef->GetPlayerMoney()), 30, sf::Color::White, sf::Vector2f(25, 25), false);
-        DrawMenu();
+        //DrawText("Money: " + std::to_string(dataManRef->GetPlayerMoney()), 30, sf::Color::White, sf::Vector2f(25, 25), false);
+        DrawMenus();
         break;
 
     case GameScreen::EndScreen:
@@ -69,37 +81,94 @@ void UIRenderer::DrawText(std::string inputText, int textSize, sf::Color textCol
     window.draw(text);
 }
 
-void UIRenderer::DrawBar(sf::Vector2f barSize, sf::Vector2f barPos, float barPercentage, sf::Color barCol)
+void UIRenderer::DrawBar(sf::Vector2f barSize, sf::Vector2f barPos, float barPercentage, sf::Color barCol, bool centerPos)
 {
     sf::RectangleShape barBack(barSize);
-    barBack.setOrigin(barSize.x / 2, barSize.y / 2);
-
+    if(centerPos) barBack.setOrigin(barSize.x / 2, barSize.y / 2);
+    
     barBack.setPosition(barPos);
     barBack.setFillColor(sf::Color::White);
     window.draw(barBack);
 
     sf::Vector2f frontPos = sf::Vector2f(barSize.x * barPercentage, barSize.y);
     sf::RectangleShape barFront(frontPos);
-    barFront.setOrigin(barSize.x / 2, barSize.y / 2);
+    if (centerPos) barFront.setOrigin(barSize.x / 2, barSize.y / 2);
     barFront.setPosition(barPos);
     barFront.setFillColor(barCol);
     window.draw(barFront);
 }
-void UIRenderer::DrawMenu()
+void UIRenderer::DrawMenus()
 {
-    sf::Vector2f menuSize(GetCentredXPos(), 150);
+    float windowWidth = window.getSize().x;
+    float menuHeight = menuMiddleSprite.getGlobalBounds().height;
 
-    menuBorderSprite.setPosition(menuAncorPoint);
-    window.draw(menuBorderSprite);
+    sf::Vector2f queuePos(windowWidth / 4, 0);
+    sf::Vector2f queueSize(windowWidth - (windowWidth / 5 * 2 + windowWidth / 4), menuHeight / 2);
 
-    float borderSpriteWidth = menuBorderSprite.getGlobalBounds().width;
-    menuBorderSprite.setPosition(menuSize.x * 2 - borderSpriteWidth, menuAncorPoint.y);
-    window.draw(menuBorderSprite);
+    //player stats are located at the top right
+    float statMenuMargin = 10;
+    sf::Vector2f playerStatsMenuPos(0, 0);
+    sf::Vector2f playerStatsMenuSize(windowWidth / 4, menuHeight);
 
-    sf::Vector2f pos(menuAncorPoint.x + borderSpriteWidth, menuAncorPoint.y);
-    menuMiddleSprite.setScale((menuSize.x - (borderSpriteWidth * 2)) / 15, 1);
-    menuMiddleSprite.setPosition(pos);
+    sf::Vector2f moneyTextPos(playerStatsMenuPos.x + statMenuMargin , playerStatsMenuPos.y + statMenuMargin);
+    sf::Vector2f expTextPos(playerStatsMenuPos.x + statMenuMargin, playerStatsMenuPos.y + statMenuMargin + 35);
+
+    //queue is located between the player stats and store
+
+    //info text is located below the queue
+    float infoTextMargin = 5;
+    sf::Vector2f infoTextPos(windowWidth / 4 + infoTextMargin, menuHeight / 2 + infoTextMargin);
+
+    //store is located at the right side of the screen
+    sf::Vector2f playerStoreMenuPos(windowWidth / 5 * 3, 0);
+    sf::Vector2f playerStoreMenuSize(windowWidth / 5 * 2, menuHeight);
+
+    //draw stat menu
+    menuMiddleSprite.setScale((playerStatsMenuSize.x - menuCornerThickness) / menuMiddleThickness, 1);
+    menuMiddleSprite.setPosition(playerStatsMenuPos);
     window.draw(menuMiddleSprite);
+
+    menuCornerSprite.setScale(-1, 1);
+    menuCornerSprite.setPosition(playerStatsMenuSize.x, 0);
+    window.draw(menuCornerSprite);
+
+    DrawText("Money: " + std::to_string(dataManRef->GetPlayerMoney()), 30, sf::Color::White, moneyTextPos, false);
+    DrawText("exp: " + std::to_string(dataManRef->GetPlayerExperience()), 30, sf::Color::White, expTextPos, false);
+
+    //draw queue
+    queue.DrawQueue(window);
+    //background
+    //sf::RectangleShape queue;
+    //queue.setSize(sf::Vector2f(15, 15));
+    //queue.setPosition(queueVisualPos);
+    //queue.setFillColor(sf::Color::White);
+    //window.draw(queue);
+
+    //DrawBar(queueBarSize, queueBarPos, 0.5, sf::Color::Red, false);
+    
+    //draw info text
+    DrawText("Info text here", 20, sf::Color::White, infoTextPos, false);
+
+    //draw shop
+    menuMiddleSprite.setScale((playerStoreMenuSize.x - menuCornerThickness) / menuMiddleThickness, 1);
+    menuMiddleSprite.setPosition(playerStoreMenuPos.x + menuCornerThickness, playerStoreMenuPos.y);
+    window.draw(menuMiddleSprite);
+
+    menuCornerSprite.setScale(1, 1);
+    menuCornerSprite.setPosition(playerStoreMenuPos.x, 0);
+    window.draw(menuCornerSprite);
+    //menuMiddleSprite.setScale(playerStoreMenuPos.x / 15, 1);
+    //menuMiddleSprite.setPosition(menuAncorPoint);
+
+    //menuBorderSprite.setScale(1, 1);
+    //menuBorderSprite.setPosition(menuAncorPoint);
+    //window.draw(menuBorderSprite);
+
+    //float borderSpriteWidth = 
+
+    //menuBorderSprite.setPosition(window.getSize().x, menuAncorPoint.y);
+    //menuBorderSprite.setScale(-1, 1);
+    //window.draw(menuBorderSprite);
 }
 void UIRenderer::CreateButton(sf::Vector2f pos, sf::String path, std::function<void()> onClick, GameScreen state)
 {

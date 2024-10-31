@@ -5,7 +5,7 @@ Unit::Unit(sf::Vector2f pos, DataManager* man, sf::String path,
     float rangCooldown, int rangDamage, float rangSightRange,
     float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
     int money, int exp)
-    : Object(pos, man, texture),
+    : Object(pos, man),
     isEnemy(enemy),
     meleeAttackCoolDown(melCooldown),
     meleeDamage(melDamage),

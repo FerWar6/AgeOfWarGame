@@ -11,6 +11,7 @@ class Object;
 class GameLoader;
 class UIRenderer;
 class UIManager;
+class Queue;
 
 class DataManager {
 public:
@@ -25,7 +26,8 @@ public:
     GameScreen GetGameScreen();
 
     // UI Pointer Setup
-    void SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen);
+    void SetPointers(GameLoader* loader, UIManager* uiMan, 
+        UIRenderer* uiRen, Queue* queue);
 
     // Game Object Management
     void AddGameObject(Object* obj);
@@ -62,6 +64,7 @@ public:
     GameLoader* gameLdrRef;
     UIRenderer* uiRenRef;
     UIManager* uiManRef;
+    Queue* queueRef;
 
     // Resource and Timing Management
     float inputCooldown = 0.25f;

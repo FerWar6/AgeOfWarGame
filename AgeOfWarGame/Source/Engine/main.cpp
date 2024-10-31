@@ -1,12 +1,8 @@
-#include "engine/engine.h"
+#include "Engine/engine.h"
 
 int main() {
-    std::cerr << "fuck you lucas" << std::endl;
-    std::cerr << "fuck you lucas" << std::endl;
-    std::cerr << "fuck you lucas" << std::endl;
-    std::cerr << "fuck you lucas" << std::endl;
-    std::cerr << "fuck you lucas" << std::endl;
+    DebugLn("start of add");
 
-    Engine engine(1500, 500, "AgeOfWar");
+    Engine engine(1200, 500, "AgeOfWar");
     return 0;
 }

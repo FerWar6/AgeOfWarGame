@@ -58,6 +58,9 @@
     <ClInclude Include="Source\Enums\Difficulty.h" />
     <ClInclude Include="Source\Enums\Age.h" />
     <ClInclude Include="Source\Enums\UnitType.h" />
+    <ClInclude Include="Source\UI\UIElements\Queue.h" />
+    <ClInclude Include="Source\UI\UIElements\QueueSlot.h" />
+    <ClInclude Include="Source\Engine\EngineExtentions\Debug.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\EnemeySpawner\EnemeySpawner.cpp">
@@ -93,5 +96,7 @@
     <ClCompile Include="source\UI\UIRenderer.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UI\UIElements\Queue.cpp" />
+    <ClCompile Include="Source\UI\UIElements\QueueSlot.cpp" />
   </ItemGroup>
 </Project>

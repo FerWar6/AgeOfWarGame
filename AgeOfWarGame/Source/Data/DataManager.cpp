@@ -25,11 +25,12 @@ GameScreen DataManager::GetGameScreen()
 }
 
 // UI Pointer Setup
-void DataManager::SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen)
+void DataManager::SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen, Queue* queue)
 {
     gameLdrRef = loader;
     uiManRef = uiMan;
     uiRenRef = uiRen;
+    queueRef = queue;
 }
 
 // Game Object Management

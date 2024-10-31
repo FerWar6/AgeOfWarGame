@@ -32,6 +32,10 @@ public:
     void DeleteCheck();
     void DeleteUnit();
 
+    float GetTrainTime()
+    {
+        return spawnTime;
+    }
     float CalculateDistance(float x1, float x2);
 
     bool isEnemy;

@@ -15,7 +15,7 @@ Engine::Engine(int width, int height, const char* windowName)
     uiMan = new UIManager(dataMan);
     uiRen = new UIRenderer(uiMan, dataMan, window);
     enemySpawner = new EnemySpawner(4, dataMan);
-    dataMan->SetPointers(gameLdr, uiMan, uiRen);
+    dataMan->SetPointers(gameLdr, uiMan, uiRen, &uiRen->queue);
     Start();
 }
 void Engine::Start() {
