@@ -3,121 +3,71 @@
 #include "Objects/Unit.h"
 #include "Data/DataManager.h"
 
+// Constructor
 Queue::Queue(sf::Vector2f pos, sf::Vector2f size, DataManager* dataMan)
     : queuePos(pos),
     queueSize(size),
     dataManRef(dataMan),
+    maxUnits(5),
+    currentBarPercentage(0),
+    currentUnitTrainTime(0),
     trainingUnit(false)
 {
     float barMargin = 5;
     queueBarPos = sf::Vector2f(pos.x + barMargin, pos.y + barMargin);
     queueBarSize = sf::Vector2f(size.x - (barMargin * 2), 10);
-
     queueSlotsPos = sf::Vector2f(queueBarPos.x, queueBarPos.y + queueBarSize.y + barMargin);
+}
 
-    CreateQueueSlots(queueSlotsPos);
+// Public Interface
+void Queue::UpdateQueue()
+{
+    if (!IsQueueEmpty()) {
+        if (!trainingUnit) {
+            SetUnitToTrain();
+        }
+        else {
+            TrainUnit();
+        }
+    }
 }
 
 void Queue::DrawQueue(sf::RenderWindow& window)
 {
-    //background
-    sf::RectangleShape queue;
-    queue.setSize(queueSize);
-    queue.setPosition(queuePos);
-    queue.setFillColor(sf::Color(70,70,70));
-    window.draw(queue);
-    //bar
-    dataManRef->uiRenRef->DrawBar(queueBarSize, queueBarPos, QueueEmpty() ? 0 : currentBarPercentage, sf::Color::Red, false);
-    //slots
-    int filledSlots = 0;
-    for (auto& slot : GetSlots()) if (slot.slotFilled()) filledSlots++;
-    DrawQueueSlots(window, filledSlots);
+    dataManRef->uiRenRef->DrawBar(queueBarSize, queueBarPos, IsQueueEmpty() ? 0 : currentBarPercentage, sf::Color::Red, false);
+    DrawQueueSlots(window, GetUnitQueue().size());
 }
 
+void Queue::AddUnitToQueue(Unit* unit)
+{
+    GetUnitQueue().push_back(unit);
+}
+
+// Private Helper Functions
 void Queue::DrawQueueSlots(sf::RenderWindow& window, int filledSlots)
 {
     int spaceBetweenSlots = 25;
-    for (int i = 0; i < GetSlots().size(); ++i) {
+    for (int i = 0; i < maxUnits; ++i) {
         sf::Vector2f slotPos(queueSlotsPos.x + (spaceBetweenSlots * i), queueSlotsPos.y);
-        if (i >= filledSlots) {
-            window.draw(DrawSlot(false, slotPos));
-        }
-        else {
-            window.draw(DrawSlot(true, slotPos));
-        }
+        window.draw(DrawSlot(i < filledSlots, slotPos));
     }
 }
 
-void Queue::UpdateQueue()
-{
-    if (!QueueEmpty()) {
-        if (!trainingUnit) {
-            SetUnitToTrain();
-            //get unit to train
-        }
-        else {
-            UpdateTrainQueue();
-            //update training timer
-        }
-    }
-}
-
-void Queue::UpdateTrainQueue()
+void Queue::TrainUnit()
 {
     if (queueClock.getElapsedTime().asSeconds() >= currentUnitTrainTime) {
-        dataManRef->MarkObjForAdd(GetFirstInQueue().GetUnit());
-        //add unit to the game
-        //move all units 1 position down
+        dataManRef->MarkObjForAdd(GetFirstFromQueue());
+        RemoveFirstFromQueue();
         trainingUnit = false;
     }
     CalculateBarPercentage(queueClock.getElapsedTime().asSeconds(), currentUnitTrainTime);
 }
 
-QueueSlot Queue::GetFirstInQueue()
-{
-    for (int i = 0; i < queueSlots.size(); ++i) {
-        for (auto& slot : GetSlots()) {
-            if (slot.slotId == i + 1 && slot.slotFilled()) return slot;
-        }
-    }
-}
-
-
 void Queue::SetUnitToTrain()
 {
-    //clear old unit and get the new firstInQueue unit
-    GetFirstInQueue().SetUnit(nullptr);
-    //move queue back by one
-    currentUnitTrainTime = GetFirstInQueue().GetUnit()->GetTrainTime();
+    currentUnitTrainTime = GetFirstFromQueue()->GetTrainTime();
     queueClock.restart();
     trainingUnit = true;
-}
-
-void Queue::AddUnitToQueue(Unit* unit)
-{
-    DebugLn("start of add");
-    FindEmptySlot().SetUnit(unit);
-    int filledSlots = 0;
-    for (auto& slot : GetSlots()) if (slot.slotFilled()) filledSlots++;
-    DebugLn(filledSlots);
-}
-
-void Queue::CreateQueueSlots(sf::Vector2f startPos)
-{
-	int numberOfSlots = 5;
-    for (int i = 0; i < numberOfSlots; ++i) {
-        QueueSlot slot = QueueSlot(i + 1);
-        queueSlots.push_back(slot);
-    }
-}
-
-QueueSlot Queue::FindEmptySlot()
-{
-    for (int i = 0; i < queueSlots.size(); ++i) {
-        for (auto& slot : GetSlots()) {
-            if (slot.slotId == i + 1 && !slot.slotFilled()) return slot;
-        }
-    }
 }
 
 sf::RectangleShape Queue::DrawSlot(bool fill, sf::Vector2f pos)
@@ -129,29 +79,30 @@ sf::RectangleShape Queue::DrawSlot(bool fill, sf::Vector2f pos)
     return slot;
 }
 
-std::vector<QueueSlot>& Queue::GetSlots()
+std::vector<Unit*>& Queue::GetUnitQueue()
 {
-    return queueSlots;
-}
-
-bool Queue::QueueEmpty()
-{
-    for (auto& slot : GetSlots()) {
-        if(slot.slotFilled()) return false;
-    }
-    return true;
-}
-
-bool Queue::QueueFull()
-{
-    for (auto& slot : GetSlots()) {
-        if (!slot.slotFilled()) return false;
-    }
-    return true;
+    return unitQueue;
 }
 
 void Queue::CalculateBarPercentage(float currentTime, float targetTime)
 {
     float percentage = currentTime / targetTime;
     currentBarPercentage = percentage;
+}
+
+Unit* Queue::GetFirstFromQueue()
+{
+    return unitQueue.front();
+}
+
+void Queue::RemoveFirstFromQueue()
+{
+    if (!unitQueue.empty()) {
+        unitQueue.erase(unitQueue.begin());
+    }
+}
+
+bool Queue::IsQueueEmpty()
+{
+    return unitQueue.empty();
 }

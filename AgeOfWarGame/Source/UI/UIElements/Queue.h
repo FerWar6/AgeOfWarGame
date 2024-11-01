@@ -5,41 +5,47 @@
 class Unit;
 class UIRenderer;
 class DataManager;
+
 class Queue
 {
 public:
-	Queue(sf::Vector2f pos, sf::Vector2f size, DataManager* dataMan);
-	void DrawQueue(sf::RenderWindow& window);
-	void DrawQueueSlots(sf::RenderWindow& window, int filledSlots);
-	void UpdateQueue();
-	void UpdateTrainQueue();
-	QueueSlot GetFirstInQueue();
-	void SetUnitToTrain();
-	void AddUnitToQueue(Unit* unit);
-	void CreateQueueSlots(sf::Vector2f pos);
-	QueueSlot FindEmptySlot();
-	sf::RectangleShape DrawSlot(bool fill, sf::Vector2f pos);
-	std::vector<QueueSlot>& GetSlots();
+    // Constructor
+    Queue(sf::Vector2f pos, sf::Vector2f size, DataManager* dataMan);
+
+    // Public Interface
+    void DrawQueue(sf::RenderWindow& window);
+    void UpdateQueue();
+    void AddUnitToQueue(Unit* unit);
+    std::vector<Unit*>& GetUnitQueue(); // Consider making this const if modifications are not needed
 
 private:
-	bool QueueEmpty();
-	bool QueueFull();
-	DataManager* dataManRef;
+    // Private Helper Functions
+    void DrawQueueSlots(sf::RenderWindow& window, int filledSlots);
+    void TrainUnit();
+    Unit* GetFirstFromQueue();
+    void RemoveFirstFromQueue();
+    bool IsQueueEmpty();
+    void SetUnitToTrain();
+    sf::RectangleShape DrawSlot(bool fill, sf::Vector2f pos);
+    void CalculateBarPercentage(float currentTime, float targetTime);
 
-	std::vector<QueueSlot> queueSlots;
-	sf::Vector2f queuePos;
-	sf::Vector2f queueSize;
+    // Member Variables
+    DataManager* dataManRef; // Reference to data manager
+    int maxUnits;            // Maximum units allowed in the queue
+    std::vector<Unit*> unitQueue; // Vector of units in the queue
 
-	sf::Vector2f queueBarPos;
-	sf::Vector2f queueBarSize;
-	float currentBarPercentage;
-	void CalculateBarPercentage(float currentTime, float targetTime);
+    // Queue Properties
+    sf::Vector2f queuePos;      // Position of the queue
+    sf::Vector2f queueSize;     // Size of the queue
+    sf::Vector2f queueBarPos;   // Position of the queue's progress bar
+    sf::Vector2f queueBarSize;  // Size of the queue's progress bar
+    sf::Vector2f queueSlotsPos; // Position of the queue slots
 
-	sf::Vector2f queueSlotsPos;
+    // Progress Bar Properties
+    float currentBarPercentage; // Current percentage of the progress bar
 
-	bool trainingUnit;
-	float currentUnitTrainTime;
-	sf::Clock queueClock;
-}; 
-
-
+    // Training Timer
+    bool trainingUnit;          // Flag indicating if a unit is currently being trained
+    float currentUnitTrainTime; // Time required to train the current unit
+    sf::Clock queueClock;       // Clock for timing queue operations
+};

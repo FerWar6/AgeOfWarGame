@@ -3,21 +3,26 @@
 
 QueueSlot::QueueSlot(int id)
 	: slotId(id),
-	slotUnit(nullptr)
+	slotUnit(nullptr),
+	slotFilled(false)
 {}
-bool QueueSlot::slotFilled()
+bool QueueSlot::GetSlotFilled()
 {
-	if (slotUnit == nullptr) {
-		return false;
-	}
-	return true;
+	return slotFilled;
 }
 
 void QueueSlot::SetUnit(Unit* unit)
 {
-	DebugLn(slotFilled());
+	DebugLn(GetSlotFilled());
 	unit = slotUnit;
-	DebugLn(slotFilled());
+	slotFilled = true;
+	DebugLn(GetSlotFilled());
+}
+
+void QueueSlot::ClearUnit()
+{
+	slotUnit = nullptr;
+	slotFilled = false;
 }
 
 Unit* QueueSlot::GetUnit()

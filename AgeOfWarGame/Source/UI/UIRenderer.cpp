@@ -136,6 +136,7 @@ void UIRenderer::DrawMenus()
     DrawText("exp: " + std::to_string(dataManRef->GetPlayerExperience()), 30, sf::Color::White, expTextPos, false);
 
     //draw queue
+    queue.UpdateQueue();
     queue.DrawQueue(window);
     //background
     //sf::RectangleShape queue;
