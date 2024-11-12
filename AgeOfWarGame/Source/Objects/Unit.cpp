@@ -1,12 +1,12 @@
 #include "Objects/Unit.h"
 
+//spawns a guardian unit
 Unit::Unit(sf::Vector2f pos, DataManager* man, sf::String path,
-    bool enemy, float melCooldown, int melDamage, float melSightRange,
+    float melCooldown, int melDamage, float melSightRange,
     float rangCooldown, int rangDamage, float rangSightRange,
-    float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
-    int money, int exp)
+    float alSightRange, int maxHealth, float spwnTime)
     : Object(pos, man),
-    isEnemy(enemy),
+    isEnemy(false),
     meleeAttackCoolDown(melCooldown),
     meleeDamage(melDamage),
     meleeSightRange(melSightRange),
@@ -16,23 +16,59 @@ Unit::Unit(sf::Vector2f pos, DataManager* man, sf::String path,
     rangedSightRange(rangSightRange),
     allySightRange(alSightRange),
     unitMaxHealth(maxHealth),
-    movementSpeed(moveSpeed),
+    movementSpeed(1),
     spawnTime(spwnTime),
+    moneyValue(0),
+    expValue(0),
+    timeBeforeDeath(0.05f),
+    markedForDeletion(false),
+    unitHealth(maxHealth),
+    folderPath(path),
+    unitAnim(unitSprite)
+{
+    StartUnit();
+}
+//spawns an enemy unit
+Unit::Unit(sf::Vector2f pos, DataManager* man, sf::String path, 
+    float melCooldown, int melDamage, float melSightRange,
+    float rangCooldown, int rangDamage, float rangSightRange,
+    float alSightRange, int maxHealth,
+    int money, int exp)
+    : Object(pos, man),
+    isEnemy(true),
+    meleeAttackCoolDown(melCooldown),
+    meleeDamage(melDamage),
+    meleeSightRange(melSightRange),
+    isRanged(true),
+    rangedAttackCoolDown(rangCooldown),
+    rangedDamage(rangDamage),
+    rangedSightRange(rangSightRange),
+    allySightRange(alSightRange),
+    unitMaxHealth(maxHealth),
+    movementSpeed(1),
+    spawnTime(0),
     moneyValue(money),
     expValue(exp),
-    timeBeforeDeath(0.05f)
+    timeBeforeDeath(0.05f),
+    markedForDeletion(false),
+    unitHealth(maxHealth),
+    folderPath(path),
+    unitAnim(unitSprite)
 {
-    if (!texture.loadFromFile(path)) {
-        std::cerr << "Error loading unit texture!" << std::endl;
-    }
-    unitSprite.setTexture(texture);
-    if(isEnemy) unitSprite.setScale(-1.f, 1.f);
-
-
-    unitHealth = maxHealth;
-    if (isEnemy) movementSpeed = -movementSpeed;
-    markedForDeletion = false;
+    StartUnit();
 }
+
+void Unit::StartUnit()
+{
+    if (isEnemy) {
+        unitSprite.setScale(-1.f, 1.f);
+        movementSpeed = -movementSpeed;
+    }
+    unitAnim.AddAnimation(folderPath);
+
+}
+
+
 void Unit::UpdateObj()
 {
     if (OpponentInRange() || ReachedOpponentBase()) {
@@ -48,11 +84,20 @@ void Unit::UpdateObj()
     DeleteCheck();
 }
 void Unit::RenderObj(sf::RenderWindow& win) {
-    if (unitSprite.getTexture() != nullptr) {
+
+    if (unitAnim.GetAnimations().size() > 0) {
         sf::FloatRect unitBounds = unitSprite.getLocalBounds();
         unitSprite.setOrigin(unitBounds.width / 2, unitBounds.height / 2);
         unitSprite.setPosition(GetPos());
         win.draw(unitSprite);
+        if (t > 500) {
+            unitAnim.UpdateAnim();
+            t = 0;
+        }
+        else {
+            t++;
+        }
+
     }
     else {
         sf::Vector2f UnitSize(25, 50);

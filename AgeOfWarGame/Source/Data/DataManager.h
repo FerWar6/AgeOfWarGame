@@ -12,6 +12,7 @@ class GameLoader;
 class UIRenderer;
 class UIManager;
 class Queue;
+class TroopManagement;
 
 class DataManager {
 public:
@@ -26,8 +27,8 @@ public:
     GameScreen GetGameScreen();
 
     // UI Pointer Setup
-    void SetPointers(GameLoader* loader, UIManager* uiMan, 
-        UIRenderer* uiRen, Queue* queue);
+    void SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen, 
+        Queue* queue, TroopManagement* troop);
 
     // Game Object Management
     void AddGameObject(Object* obj);
@@ -65,7 +66,7 @@ public:
     UIRenderer* uiRenRef;
     UIManager* uiManRef;
     Queue* queueRef;
-
+    TroopManagement* troopManRef;
     // Resource and Timing Management
     float inputCooldown = 0.25f;
     sf::Clock inputCooldownClock;

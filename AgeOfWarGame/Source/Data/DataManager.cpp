@@ -2,6 +2,7 @@
 #include "Objects/Object.h"
 #include "Objects/Unit.h"
 #include "Objects/Base.h"
+#include "Management/TroopManagement.h"
 #include <algorithm>
 
 // Constructor
@@ -25,12 +26,13 @@ GameScreen DataManager::GetGameScreen()
 }
 
 // UI Pointer Setup
-void DataManager::SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen, Queue* queue)
+void DataManager::SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen, Queue* queue, TroopManagement* troop)
 {
     gameLdrRef = loader;
     uiManRef = uiMan;
     uiRenRef = uiRen;
     queueRef = queue;
+    troopManRef = troop;
 }
 
 // Game Object Management

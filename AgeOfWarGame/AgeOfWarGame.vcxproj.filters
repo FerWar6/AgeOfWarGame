@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Data">
+      <UniqueIdentifier>{3F05847C-2B3C-850D-D428-6B10C03E010F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="EnemeySpawner">
       <UniqueIdentifier>{686AF6D1-D42A-7208-9D65-BB8509E5B6E4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine">
       <UniqueIdentifier>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\EngineExtentions">
+      <UniqueIdentifier>{B1FC684D-1D34-B1E4-263E-150892F4D7DD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Enums">
       <UniqueIdentifier>{CDEC1D0D-3901-46BE-0283-E91D6E5642EF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Managing Data">
-      <UniqueIdentifier>{61B3E379-CD73-5FB0-96AE-A82D022EA48C}</UniqueIdentifier>
+    <Filter Include="Management">
+      <UniqueIdentifier>{A25AC136-8E12-0384-F719-DCDFE3F09D74}</UniqueIdentifier>
     </Filter>
     <Filter Include="Objects">
       <UniqueIdentifier>{CF2649B1-3B06-C84C-441E-5323B07C2EAE}</UniqueIdentifier>
@@ -24,18 +30,38 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\EnemeySpawner\EnemeySpawner.h" />
+    <ClInclude Include="source\Data\DataManager.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemeySpawner\EnemeySpawner.h">
+      <Filter>EnemeySpawner</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Engine\EngineExtentions\Debug.h">
+      <Filter>Engine\EngineExtentions</Filter>
+    </ClInclude>
     <ClInclude Include="source\Engine\GameLoader.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="source\Engine\engine.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="source\Enums\Age.h">
+      <Filter>Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enums\Difficulty.h">
+      <Filter>Enums</Filter>
+    </ClInclude>
     <ClInclude Include="source\Enums\GameScreen.h">
       <Filter>Enums</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Data\DataManager.h">
-      <Filter>Managing Data</Filter>
+    <ClInclude Include="source\Enums\UnitType.h">
+      <Filter>Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Management\TextureManagement.h">
+      <Filter>Management</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Management\TroopManagement.h">
+      <Filter>Management</Filter>
     </ClInclude>
     <ClInclude Include="source\Objects\Base.h">
       <Filter>Objects</Filter>
@@ -49,20 +75,25 @@
     <ClInclude Include="source\UI\UIElements\Button.h">
       <Filter>UI\UIElements</Filter>
     </ClInclude>
+    <ClInclude Include="source\UI\UIElements\Queue.h">
+      <Filter>UI\UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="source\UI\UIElements\QueueSlot.h">
+      <Filter>UI\UIElements</Filter>
+    </ClInclude>
     <ClInclude Include="source\UI\UIManager.h">
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="source\UI\UIRenderer.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Enums\Difficulty.h" />
-    <ClInclude Include="Source\Enums\Age.h" />
-    <ClInclude Include="Source\Enums\UnitType.h" />
-    <ClInclude Include="Source\UI\UIElements\Queue.h" />
-    <ClInclude Include="Source\UI\UIElements\QueueSlot.h" />
-    <ClInclude Include="Source\Engine\EngineExtentions\Debug.h" />
+    <ClInclude Include="Source\Animation\Animator.h" />
+    <ClInclude Include="Source\Animation\Animation.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Data\DataManager.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
     <ClCompile Include="source\EnemeySpawner\EnemeySpawner.cpp">
       <Filter>EnemeySpawner</Filter>
     </ClCompile>
@@ -75,8 +106,11 @@
     <ClCompile Include="source\Engine\main.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Data\DataManager.cpp">
-      <Filter>Managing Data</Filter>
+    <ClCompile Include="source\Management\TextureManagement.cpp">
+      <Filter>Management</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Management\TroopManagement.cpp">
+      <Filter>Management</Filter>
     </ClCompile>
     <ClCompile Include="source\Objects\Base.cpp">
       <Filter>Objects</Filter>
@@ -90,13 +124,19 @@
     <ClCompile Include="source\UI\UIElements\Button.cpp">
       <Filter>UI\UIElements</Filter>
     </ClCompile>
+    <ClCompile Include="source\UI\UIElements\Queue.cpp">
+      <Filter>UI\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\UIElements\QueueSlot.cpp">
+      <Filter>UI\UIElements</Filter>
+    </ClCompile>
     <ClCompile Include="source\UI\UIManager.cpp">
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="source\UI\UIRenderer.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\UI\UIElements\Queue.cpp" />
-    <ClCompile Include="Source\UI\UIElements\QueueSlot.cpp" />
+    <ClCompile Include="Source\Animation\Animator.cpp" />
+    <ClCompile Include="Source\Animation\Animation.cpp" />
   </ItemGroup>
 </Project>

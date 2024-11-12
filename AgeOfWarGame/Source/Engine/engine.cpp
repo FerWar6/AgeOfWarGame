@@ -5,6 +5,7 @@
 #include "EnemeySpawner/EnemeySpawner.h"
 #include "UI/UIManager.h"
 #include "UI/UIRenderer.h"
+#include "Management/TroopManagement.h"
 Engine::Engine(int width, int height, const char* windowName)
     : currentGameScreen(GameScreen::StartScreen)
 {
@@ -15,7 +16,8 @@ Engine::Engine(int width, int height, const char* windowName)
     uiMan = new UIManager(dataMan);
     uiRen = new UIRenderer(uiMan, dataMan, window);
     enemySpawner = new EnemySpawner(4, dataMan);
-    dataMan->SetPointers(gameLdr, uiMan, uiRen, &uiRen->queue);
+    troopManRef = new TroopManagement(dataMan);
+    dataMan->SetPointers(gameLdr, uiMan, uiRen, &uiRen->queue, troopManRef);
     Start();
 }
 void Engine::Start() {

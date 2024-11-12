@@ -9,11 +9,13 @@
 #include "Enums/UnitType.h"
 #include "Enums/Age.h"
 #include "Engine/EngineExtentions/Debug.h"
+#include "Management/TextureManagement.h"
 class DataManager;
 class EnemySpawner;
 class UIManager;
 class UIRenderer;
 class GameLoader;
+class TroopManagement;
 
 class Engine {
 public:
@@ -37,5 +39,6 @@ private:
 	EnemySpawner* enemySpawner;
 	UIManager* uiMan;
 	UIRenderer* uiRen;
+	TroopManagement* troopManRef;
 	GameScreen currentGameScreen;
 };

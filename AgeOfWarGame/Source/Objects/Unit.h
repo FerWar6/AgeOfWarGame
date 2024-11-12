@@ -3,6 +3,7 @@
 #include "Data/DataManager.h"
 #include "Objects/Object.h"
 #include "Objects/Base.h"
+#include "Animation/Animator.h"
 #include <cmath>
 #include <limits>
 
@@ -10,10 +11,15 @@ class Unit : public Object{
 public:
     //Unit Constructor
     Unit(sf::Vector2f pos, DataManager* man, sf::String path,
-        bool enemy, float melCooldown, int melDamage, float melSightRange,
+        float melCooldown, int melDamage, float melSightRange,
         float rangCooldown, int rangDamage, float rangSightRange,
-        float alSightRange, int maxHealth, float moveSpeed, float spwnTime,
+        float alSightRange, int maxHealth, float spwnTime);
+    Unit(sf::Vector2f pos, DataManager* man, sf::String path,
+        float melCooldown, int melDamage, float melSightRange,
+        float rangCooldown, int rangDamage, float rangSightRange,
+        float alSightRange, int maxHealth,
         int money, int exp);
+    void StartUnit();
     //Object Overrides
     void UpdateObj() override;
     void RenderObj(sf::RenderWindow& win) override;
@@ -40,8 +46,12 @@ public:
 
     bool isEnemy;
 private:
-    sf::Texture texture;
+    sf::String folderPath;
+    Animator unitAnim;
     sf::Sprite unitSprite;
+    int t = 0;
+
+
     sf::Clock meleeAttackCooldownClock;
     float meleeAttackCoolDown;
     int meleeDamage;
