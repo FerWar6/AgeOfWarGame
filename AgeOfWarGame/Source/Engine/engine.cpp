@@ -1,26 +1,28 @@
 #include "Engine/engine.h"
-#include "Engine/GameLoader.h"
-#include "Data/DataManager.h"
 #include "Objects/Object.h"
-#include "EnemeySpawner/EnemeySpawner.h"
-#include "UI/UIManager.h"
-#include "UI/UIRenderer.h"
-#include "Management/TroopManagement.h"
-Engine::Engine(int width, int height, const char* windowName)
-    : currentGameScreen(GameScreen::StartScreen)
-{
-    gamePaused = false;
-    window.create(sf::VideoMode(width, height), windowName);
-    dataMan = new DataManager(this, window);
-    gameLdr = new GameLoader(dataMan);
-    uiMan = new UIManager(dataMan);
-    uiRen = new UIRenderer(uiMan, dataMan, window);
-    enemySpawner = new EnemySpawner(4, dataMan);
-    troopManRef = new TroopManagement(dataMan);
-    dataMan->SetPointers(gameLdr, uiMan, uiRen, &uiRen->queue, troopManRef);
+Engine::Engine(int strange)
+    : currentGameScreen(GameScreen::StartScreen),
+    gamePaused(false),
+    textureLoader(),
+    dataMan(this, window),
+    gameLdr(&dataMan),
+    uiMan(&dataMan),
+    uiRen(&uiMan, &dataMan, window),
+    troopMan(&dataMan),
+    enemySpawner(3.5f, &dataMan)
+{ 
+
+    int width = 1200;
+    int height = 500;
+    std::string name = "AgeOfWar";
+    window.create(sf::VideoMode(width, height), name);
+    DebugLn("Constructed engine");
+    uiRen.SetPositions();
+    dataMan.SetPointers(&gameLdr, &uiMan, &uiRen, &uiRen.queue, &troopMan);
     Start();
 }
 void Engine::Start() {
+    DebugLn("Started Engine");
     UpdateEngine();
 }
 void Engine::UpdateEngine()
@@ -28,8 +30,10 @@ void Engine::UpdateEngine()
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
+                DebugLn("Closed Engine");
                 window.close();
+            }
         }
         if(!gamePaused) UpdateGame();
         RenderGame();
@@ -38,25 +42,25 @@ void Engine::UpdateEngine()
 
 void Engine::UpdateGame()
 {
-    if (!dataMan->markedForAddition.empty() || !dataMan->markedForDeletion.empty()) {
-        dataMan->UpdateGameObjVector();
+    if (!dataMan.markedForAddition.empty() || !dataMan.markedForDeletion.empty()) {
+        dataMan.UpdateGameObjVector();
     }
     switch (currentGameScreen) {
     case GameScreen::StartScreen:
         break;
 
     case GameScreen::GameScreen:
-        enemySpawner->UpdateSpawner();
-        if (!dataMan->gameObjects.empty()) {
-            for (auto& obj : dataMan->GetGameObjects()) {
+        enemySpawner.UpdateSpawner();
+        if (!dataMan.gameObjects.empty()) {
+            for (auto& obj : dataMan.GetGameObjects()) {
                 obj->UpdateObj();
             }
         }
-        if (dataMan->dataCleared) dataMan->dataCleared = false;
+        if (dataMan.dataCleared) dataMan.dataCleared = false;
         break;
 
     case GameScreen::EndScreen:
-        if (!dataMan->dataCleared) dataMan->ClearGameData();
+        if (!dataMan.dataCleared) dataMan.ClearGameData();
         break;
     }
 }
@@ -66,7 +70,7 @@ void Engine::RenderGame() {
     window.clear();
 
     sf::Sprite testSprite;
-    testSprite.setTexture(dataMan->placeHoldTexture);
+    testSprite.setTexture(dataMan.placeHoldTexture);
     window.draw(testSprite);
 
     switch (currentGameScreen) {
@@ -82,7 +86,7 @@ void Engine::RenderGame() {
         RenderDeathScreen();
         break;
     }
-    uiRen->Render();
+    uiRen.Render();
     window.display();
 }
 
@@ -102,7 +106,7 @@ void Engine::RenderStartScreen()
 
 void Engine::RenderGameScreen()
 {
-    for (auto& obj : dataMan->GetGameObjects()) {
+    for (auto& obj : dataMan.GetGameObjects()) {
         obj->RenderObj(window);
     }
 }

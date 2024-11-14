@@ -1,4 +1,6 @@
-#include "Engine/GameLoader.h"
+#include "GameLoader.h"
+#include "Objects/Base.h"
+#include "Data/DataManager.h"
 GameLoader::GameLoader(DataManager* dataMan)
     : dataManRef(dataMan)
 {

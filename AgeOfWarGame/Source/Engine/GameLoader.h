@@ -1,6 +1,10 @@
 #pragma once
-#include "Engine/engine.h"
-#include "Objects/Base.h"
+
+#include "Enums/Difficulty.h"
+#include <SFML/Graphics.hpp>
+
+class DataManager;
+
 class GameLoader
 {
 public:

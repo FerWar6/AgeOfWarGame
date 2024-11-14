@@ -1,4 +1,10 @@
-#include "Objects/Unit.h"
+#include "Unit.h"
+
+#include "Management/TroopManagement.h"
+#include "Management/TextureManagement.h"
+#include "Data/DataManager.h"
+#include "Objects/Base.h"
+#include "UI/UIRenderer.h"
 
 //spawns a guardian unit
 Unit::Unit(sf::Vector2f pos, DataManager* man, sf::String path,
@@ -64,21 +70,31 @@ void Unit::StartUnit()
         unitSprite.setScale(-1.f, 1.f);
         movementSpeed = -movementSpeed;
     }
-    unitAnim.AddAnimation(folderPath);
-
+    std::string runPath = TextureManagement::SearchForItemInFolder(folderPath, "run");
+    std::string idlePath = TextureManagement::SearchForItemInFolder(folderPath, "idle");
+    std::string attackPath = TextureManagement::SearchForItemInFolder(folderPath, "attack");
+    std::string diePath = TextureManagement::SearchForItemInFolder(folderPath, "die");
+    if (runPath != "") unitAnim.AddAnimation(runPath, "run");
+    if (idlePath != "") unitAnim.AddAnimation(idlePath, "idle");
+    if (attackPath != "") unitAnim.AddAnimation(attackPath, "attack");
+    if (diePath != "") unitAnim.AddAnimation(diePath, "die");
+    t = 1000;
 }
 
 
 void Unit::UpdateObj()
 {
     if (OpponentInRange() || ReachedOpponentBase()) {
+        unitAnim.SetAnimation("attack");
         AttackWithCooldown();
     }
     else if (!AllyInFront()) {
         MoveUnit();
+        unitAnim.SetAnimation("run");
         meleeAttackCooldownClock.restart();
     }
     else {
+        unitAnim.SetAnimation("idle");
         meleeAttackCooldownClock.restart();
     }
     DeleteCheck();
@@ -86,18 +102,17 @@ void Unit::UpdateObj()
 void Unit::RenderObj(sf::RenderWindow& win) {
 
     if (unitAnim.GetAnimations().size() > 0) {
-        sf::FloatRect unitBounds = unitSprite.getLocalBounds();
-        unitSprite.setOrigin(unitBounds.width / 2, unitBounds.height / 2);
-        unitSprite.setPosition(GetPos());
-        win.draw(unitSprite);
-        if (t > 500) {
+        if (t > 200) {
             unitAnim.UpdateAnim();
             t = 0;
         }
         else {
             t++;
         }
-
+        sf::FloatRect unitBounds = unitSprite.getLocalBounds();
+        unitSprite.setOrigin(unitBounds.width / 2, unitBounds.height / 2);
+        unitSprite.setPosition(GetPos());
+        win.draw(unitSprite);
     }
     else {
         sf::Vector2f UnitSize(25, 50);

@@ -1,7 +1,8 @@
 #pragma once
-#include "Data/DataManager.h"
-#include "Engine/engine.h"
-#include "UI/UIRenderer.h"
+
+#include <SFML/Graphics.hpp>
+
+class DataManager;
 
 class Object{
 public:

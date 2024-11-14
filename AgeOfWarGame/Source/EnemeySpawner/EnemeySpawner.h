@@ -1,6 +1,9 @@
 #pragma once
-#include "Data/DataManager.h"
-#include "engine/engine.h"
+
+#include <SFML/Graphics.hpp>
+
+class DataManager;
+
 class EnemySpawner{
 public:
 	EnemySpawner(float cooldown, DataManager* dataMan);

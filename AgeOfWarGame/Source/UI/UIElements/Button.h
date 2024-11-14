@@ -1,9 +1,10 @@
 #pragma once
-#include "Engine/engine.h"
 
+#include <SFML/Graphics.hpp>
 #include <functional>
-#include <SFML/Window.hpp>
-#include <iostream>
+#include "Enums/GameScreen.h"
+
+class DataManager;
 class Button {
 public:
     Button(sf::Vector2f pos, sf::String path, std::function<void()> onClick, GameScreen state, DataManager* dataMan);

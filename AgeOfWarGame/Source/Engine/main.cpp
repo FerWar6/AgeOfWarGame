@@ -1,6 +1,6 @@
 #include "Engine/engine.h"
-
 int main() {
-    Engine engine(1200, 500, "AgeOfWar");
+    int breaksifnoinputparameter = 1;
+    Engine engine(breaksifnoinputparameter);
     return 0;
 }

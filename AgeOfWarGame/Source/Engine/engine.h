@@ -1,25 +1,25 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <iostream>
-#include <vector>
-#include <algorithm>
 
-#include "Enums/GameScreen.h"
-#include "Enums/Difficulty.h"
-#include "Enums/UnitType.h"
-#include "Enums/Age.h"
+//#include "Enums/GameScreen.h"
+//#include "Enums/Difficulty.h"
+//#include "Enums/UnitType.h"
+//#include "Enums/Age.h"
+//#include "Management/TextureManagement.h"
 #include "Engine/EngineExtentions/Debug.h"
-#include "Management/TextureManagement.h"
-class DataManager;
-class EnemySpawner;
-class UIManager;
-class UIRenderer;
-class GameLoader;
-class TroopManagement;
+
+#include <SFML/Graphics.hpp>
+
+#include "Data/DataManager.h"
+#include "Engine/GameLoader.h"
+#include "UI/UIManager.h"
+#include "UI/UIRenderer.h"
+#include "Management/TroopManagement.h"
+#include "Management/TextureLoader.h"
+#include "EnemeySpawner/EnemeySpawner.h"
 
 class Engine {
 public:
-	Engine(int width, int height, const char* windowName);
+	Engine(int strange);
 	void Start();
 	void UpdateEngine();
 	void UpdateGame();
@@ -34,11 +34,12 @@ private:
 
 	bool gamePaused;
 	sf::RenderWindow window;
-	DataManager* dataMan;
-	GameLoader* gameLdr;
-	EnemySpawner* enemySpawner;
-	UIManager* uiMan;
-	UIRenderer* uiRen;
-	TroopManagement* troopManRef;
 	GameScreen currentGameScreen;
+	DataManager dataMan;
+	GameLoader gameLdr;
+	UIManager uiMan;
+	UIRenderer uiRen;
+	TroopManagement troopMan;
+	TextureLoader textureLoader;
+	EnemySpawner enemySpawner;
 };

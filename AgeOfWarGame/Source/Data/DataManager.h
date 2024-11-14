@@ -1,10 +1,12 @@
 #pragma once
 
-#include "Engine/engine.h"
 #include <vector>
 #include <SFML/Graphics.hpp>
 
+#include "Enums/GameScreen.h"
+
 // Forward declarations
+class Engine;
 class Unit;
 class Base;
 class Object;
@@ -21,7 +23,7 @@ public:
 
     // Public Member Variables (to remain public as specified)
     sf::RenderWindow& window;
-
+    sf::Vector2u GetWindowSize();
     // Game State Management
     void SetGameScreen(GameScreen state);
     GameScreen GetGameScreen();

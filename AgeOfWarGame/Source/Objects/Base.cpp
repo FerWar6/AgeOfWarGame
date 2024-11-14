@@ -1,5 +1,7 @@
+#include "Base.h"
+
 #include "Data/DataManager.h"
-#include "Objects/Base.h"
+#include "UI/UIRenderer.h"
 
 Base::Base(sf::Vector2f pos, DataManager* man, sf::Texture texture, int health, bool enemy)
 	: Object(pos, man),

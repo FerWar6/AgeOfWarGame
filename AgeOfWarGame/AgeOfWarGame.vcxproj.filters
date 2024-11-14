@@ -78,9 +78,6 @@
     <ClInclude Include="source\UI\UIElements\Queue.h">
       <Filter>UI\UIElements</Filter>
     </ClInclude>
-    <ClInclude Include="source\UI\UIElements\QueueSlot.h">
-      <Filter>UI\UIElements</Filter>
-    </ClInclude>
     <ClInclude Include="source\UI\UIManager.h">
       <Filter>UI</Filter>
     </ClInclude>
@@ -89,6 +86,8 @@
     </ClInclude>
     <ClInclude Include="Source\Animation\Animator.h" />
     <ClInclude Include="Source\Animation\Animation.h" />
+    <ClInclude Include="Source\Management\TextureLoader.h" />
+    <ClInclude Include="Source\Management\TextureItem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Data\DataManager.cpp">
@@ -127,9 +126,6 @@
     <ClCompile Include="source\UI\UIElements\Queue.cpp">
       <Filter>UI\UIElements</Filter>
     </ClCompile>
-    <ClCompile Include="source\UI\UIElements\QueueSlot.cpp">
-      <Filter>UI\UIElements</Filter>
-    </ClCompile>
     <ClCompile Include="source\UI\UIManager.cpp">
       <Filter>UI</Filter>
     </ClCompile>
@@ -138,5 +134,7 @@
     </ClCompile>
     <ClCompile Include="Source\Animation\Animator.cpp" />
     <ClCompile Include="Source\Animation\Animation.cpp" />
+    <ClCompile Include="Source\Management\TextureLoader.cpp" />
+    <ClCompile Include="Source\Management\TextureItem.cpp" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 #include "UI/UIManager.h"
+#include "Data/DataManager.h"
 #include "Objects/Base.h"
 #include "Objects/Unit.h"
 #include "Engine/GameLoader.h"

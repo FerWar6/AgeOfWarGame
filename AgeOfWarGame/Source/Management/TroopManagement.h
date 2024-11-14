@@ -1,7 +1,10 @@
 #pragma once
 
-#include "Engine/engine.h"
-#include "Data/DataManager.h"
+#include "Enums/UnitType.h"
+#include "Enums/Age.h"
+
+class DataManager;
+
 class TroopManagement
 {
 public:

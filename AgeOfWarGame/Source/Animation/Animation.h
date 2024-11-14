@@ -8,14 +8,17 @@ class Animator;
 class Animation
 {
 public:
-	Animation(sf::String path);
+	Animation(sf::String path, sf::String name);
 	sf::IntRect GetAnimationFrame();
 	sf::Texture& GetTexture();
+	sf::Vector2i GetFrameSize();
+	sf::String GetName();
 	void ResetAnimation();
 private:
-	sf::Texture fullTexture;
 	void UpdateFrame();
+	sf::String name;
+	sf::Texture fullTexture;
 	sf::Vector2i frameSize;
-	int numberOfFrames;
+	int amountOfFrames;
 	int currentFrame;
 };

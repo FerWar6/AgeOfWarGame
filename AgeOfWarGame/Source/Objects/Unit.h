@@ -1,11 +1,9 @@
 #pragma once
-#include "Engine/engine.h"
-#include "Data/DataManager.h"
+
 #include "Objects/Object.h"
-#include "Objects/Base.h"
 #include "Animation/Animator.h"
-#include <cmath>
-#include <limits>
+
+class DataManager;
 
 class Unit : public Object{
 public:

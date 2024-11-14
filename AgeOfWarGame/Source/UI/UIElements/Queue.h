@@ -1,6 +1,7 @@
 #pragma once
-#include "Engine/engine.h"
-#include "UI/UIElements/QueueSlot.h"
+
+#include <SFML/Graphics.hpp>
+
 
 class Unit;
 class UIRenderer;
@@ -10,8 +11,8 @@ class Queue
 {
 public:
     // Constructor
-    Queue(sf::Vector2f pos, sf::Vector2f size, DataManager* dataMan);
-
+    Queue(DataManager* dataMan);
+    void SetPositions();
     // Public Interface
     void DrawQueue(sf::RenderWindow& window);
     void UpdateQueue();

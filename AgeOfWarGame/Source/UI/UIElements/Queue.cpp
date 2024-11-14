@@ -4,18 +4,24 @@
 #include "Data/DataManager.h"
 
 // Constructor
-Queue::Queue(sf::Vector2f pos, sf::Vector2f size, DataManager* dataMan)
-    : queuePos(pos),
-    queueSize(size),
+Queue::Queue(DataManager* dataMan)
+    : queuePos(0, 0),
+    queueSize(0, 0),
     dataManRef(dataMan),
     maxUnits(5),
     currentBarPercentage(0),
     currentUnitTrainTime(0),
     trainingUnit(false)
+{}
+
+void Queue::SetPositions()
 {
+    sf::Vector2u window = dataManRef->GetWindowSize();
+    queuePos = sf::Vector2f(window.x / 4, 0);
+    queueSize = sf::Vector2f(window.x - (window.x / 5 * 2 + window.x / 4), 100 / 2);
     float barMargin = 5;
-    queueBarPos = sf::Vector2f(pos.x + barMargin, pos.y + barMargin);
-    queueBarSize = sf::Vector2f(size.x - (barMargin * 2), 10);
+    queueBarPos = sf::Vector2f(queuePos.x + barMargin, queuePos.y + barMargin);
+    queueBarSize = sf::Vector2f(queueSize.x - (barMargin * 2), 10);
     queueSlotsPos = sf::Vector2f(queueBarPos.x, queueBarPos.y + queueBarSize.y + barMargin);
 }
 

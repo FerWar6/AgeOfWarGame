@@ -1,6 +1,12 @@
 #pragma once
-#include "Engine/engine.h"
-#include "Data/DataManager.h"
+
+#include "Enums/GameScreen.h"
+#include "Enums/Difficulty.h"
+#include "Enums/UnitType.h"
+#include "Enums/Age.h"
+
+class DataManager;
+
 class UIManager
 {
 public:

@@ -1,14 +1,15 @@
 #pragma once
-#include "Engine/engine.h"
-#include "Data/DataManager.h"
 #include "UI/UIManager.h"
 #include "UI/UIElements/Button.h"
 #include "UI/UIElements/Queue.h"
 
+class DataManager;
+
 class UIRenderer
 {
 public:
-	UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow& window);
+	UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow& win);
+	void SetPositions();
 	void Render();
 	void DrawText(std::string inputText, int textSize, 
 		sf::Color textCol, sf::Vector2f pos, bool centerPos = true);

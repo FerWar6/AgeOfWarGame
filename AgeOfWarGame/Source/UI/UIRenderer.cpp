@@ -1,22 +1,17 @@
-#include "UI/UIRenderer.h"
+#include "UIRenderer.h"
+#include "Data/DataManager.h"
+#include "Management/TextureManagement.h"
+#include <iostream>
 
-UIRenderer::UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow& window)
+UIRenderer::UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow& win)
     : uiManRef(uiMan),
     dataManRef(dataMan),
-    window(window),
-    queue(sf::Vector2f(window.getSize().x / 4, 0), 
-        sf::Vector2f(window.getSize().x - (window.getSize().x / 5 * 2 + window.getSize().x / 4), 100 / 2), dataMan)
+    window(win),
+    queue(dataMan)
 {
-    //float windowWidth = window.getSize().x;
-    //float menuHeight = menuMiddleSprite.getGlobalBounds().height;
-
-    //sf::Vector2f queuePos(windowWidth / 4, 0);
-    //sf::Vector2f queueSize();
-
-    //queue = Queue(queuePos, queueSize);
-    if (!menuMiddleTexture.loadFromFile("Assets/menuMiddle2.png")) std::cerr << "Error loading menu Texture!" << std::endl;
+    TextureManagement::LoadTextFromPath(menuMiddleTexture, "Assets/menuMiddle2.png");
     menuMiddleSprite.setTexture(menuMiddleTexture);
-    if (!menuCornerTexture.loadFromFile("Assets/menuCorner2.png")) std::cerr << "Error loading menu Texture!" << std::endl;
+    TextureManagement::LoadTextFromPath(menuCornerTexture, "Assets/menuCorner2.png");
     menuCornerSprite.setTexture(menuCornerTexture);
 
     menuCornerThickness = menuCornerSprite.getGlobalBounds().width;
@@ -27,6 +22,11 @@ UIRenderer::UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow&
         std::cerr << "Error loading font!" << std::endl;
         return;
     }
+}
+
+void UIRenderer::SetPositions()
+{
+    queue.SetPositions();
     //Spawning melee button
     sf::Vector2f ButtonPos1(sf::Vector2f(900, 50));
     sf::Vector2f ButtonPos2(sf::Vector2f(975, 50));
@@ -41,6 +41,7 @@ UIRenderer::UIRenderer(UIManager* uiMan, DataManager* dataMan, sf::RenderWindow&
     //Restart button
     CreateButton(GetCentredPos(), "Assets/RestartButton.png", std::bind(&UIManager::MoveToScreen, uiManRef, GameScreen::StartScreen), GameScreen::EndScreen);
 }
+
 
 void UIRenderer::Render()
 {
@@ -66,6 +67,7 @@ void UIRenderer::Render()
         }
     }
 }
+
 
 void UIRenderer::DrawText(std::string inputText, int textSize, sf::Color textCol, sf::Vector2f pos, bool centerPos)
 {

@@ -1,4 +1,6 @@
-#include "Data/DataManager.h"
+#include "DataManager.h"
+
+#include "Engine/engine.h"
 #include "Objects/Object.h"
 #include "Objects/Unit.h"
 #include "Objects/Base.h"
@@ -11,8 +13,20 @@ DataManager::DataManager(Engine* engine, sf::RenderWindow& window)
     playerExperience(0),
     dataCleared(false),
     engineRef(engine),
-    window(window)
+    window(window),
+    enemyBase(nullptr),
+    playerBase(nullptr),
+    gameLdrRef(nullptr),
+    uiManRef(nullptr),
+    uiRenRef(nullptr),
+    queueRef(nullptr),
+    troopManRef(nullptr)
 {}
+
+sf::Vector2u DataManager::GetWindowSize()
+{
+    return window.getSize();
+}
 
 // Game State Management
 void DataManager::SetGameScreen(GameScreen state)

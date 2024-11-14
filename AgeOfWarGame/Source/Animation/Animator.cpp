@@ -1,23 +1,31 @@
 #include "Animator.h"
 
 Animator::Animator(sf::Sprite& srt)
-	: sprite(srt)
+	: sprite(srt),
+	curAnim(nullptr)
 {}
 
 void Animator::UpdateAnim()
 {
-	int animationIndex = 0;
-	sprite.setTexture(animations[animationIndex].GetTexture());
-	sprite.setTextureRect(animations[animationIndex].GetAnimationFrame());
+	sprite.setTexture(curAnim->GetTexture());
+	sprite.setTextureRect(curAnim->GetAnimationFrame());
 }
 
-void Animator::AddAnimation(sf::String path)
+void Animator::SetAnimation(sf::String animName)
 {
-	animations.emplace_back(path);
-	if (sprite.getTexture() == nullptr) {
-		sprite.setTexture(animations[0].GetTexture());
-		sprite.setTextureRect(animations[0].GetAnimationFrame());
+	for (auto& anim : animations) {
+		if (anim.GetName() == animName) {
+			curAnim = &anim;
+			return;
+		}
 	}
+}
+
+void Animator::AddAnimation(sf::String path, sf::String animName)
+{
+	animations.emplace_back(path, animName);
+
+	if (sprite.getTexture() == nullptr) SetFirstAnim();
 }
 
 std::vector<Animation>& Animator::GetAnimations()
@@ -25,4 +33,10 @@ std::vector<Animation>& Animator::GetAnimations()
 	return animations;
 }
 
-
+void Animator::SetFirstAnim()
+{
+	curAnim = &animations[0];
+	sprite.setTexture(curAnim->GetTexture());
+	sf::IntRect rect = sf::IntRect(0, 0, curAnim->GetFrameSize().x, curAnim->GetFrameSize().y);
+	sprite.setTextureRect(rect);
+}

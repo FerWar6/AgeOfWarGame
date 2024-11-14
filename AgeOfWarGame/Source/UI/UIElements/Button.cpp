@@ -1,5 +1,6 @@
-#include "UI/UIElements/Button.h"
+#include "Button.h"
 #include "Data/DataManager.h"
+#include "Management/TextureManagement.h"
 
 Button::Button(sf::Vector2f pos, sf::String path, std::function<void()> onClick, GameScreen state, DataManager* dataMan)
     : buttonPos(pos),
@@ -7,9 +8,7 @@ Button::Button(sf::Vector2f pos, sf::String path, std::function<void()> onClick,
     buttonState(state),
     dataManRef(dataMan)
 {
-    if (!texture.loadFromFile(path)) {
-        std::cerr << "Error loading button texture!" << std::endl;
-    }
+    TextureManagement::LoadTextFromPath(texture, path);
     buttonSprite.setTexture(texture);
 
     sf::FloatRect buttonBounds = buttonSprite.getLocalBounds();
