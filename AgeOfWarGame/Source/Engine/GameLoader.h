@@ -9,8 +9,9 @@ class GameLoader
 {
 public:
 	GameLoader(DataManager* dataMan);
+	void CreateBases();
 	void LoadGame(Difficulty difficulty);
-	void CreateBase(sf::Vector2f pos, int health, bool enemy);
 private:
+	void CreateBase(sf::FloatRect rect, int health, bool enemy);
 	DataManager* dataManRef;
 };

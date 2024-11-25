@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{859E00A2-F108-B518-3A47-66BEA6F0926D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{CE7141AB-BA13-6C81-A3CE-7FD58F0FF3D1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Data">
       <UniqueIdentifier>{3F05847C-2B3C-850D-D428-6B10C03E010F}</UniqueIdentifier>
     </Filter>
@@ -22,15 +28,33 @@
     <Filter Include="Objects">
       <UniqueIdentifier>{CF2649B1-3B06-C84C-441E-5323B07C2EAE}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{A95C6780-9529-C28B-BE42-B033AA6EF719}</UniqueIdentifier>
+    </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{83755900-6F01-880B-D8AF-880BC45A880B}</UniqueIdentifier>
     </Filter>
     <Filter Include="UI\UIElements">
       <UniqueIdentifier>{ED8BC9E2-594C-4519-2287-8E968E068AF5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Visuals">
+      <UniqueIdentifier>{8C8520DD-F864-9F78-017D-2A4F6DDB05DA}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\Animation\Animation.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Animation\Animator.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\CameraMovement.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
     <ClInclude Include="source\Data\DataManager.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Data\ServiceLocator.h">
       <Filter>Data</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemeySpawner\EnemeySpawner.h">
@@ -51,7 +75,10 @@
     <ClInclude Include="source\Enums\Difficulty.h">
       <Filter>Enums</Filter>
     </ClInclude>
-    <ClInclude Include="source\Enums\GameScreen.h">
+    <ClInclude Include="source\Enums\Screen.h">
+      <Filter>Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enums\ShopState.h">
       <Filter>Enums</Filter>
     </ClInclude>
     <ClInclude Include="source\Enums\UnitType.h">
@@ -69,8 +96,17 @@
     <ClInclude Include="source\Objects\Object.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="source\Objects\Unit.h">
+    <ClInclude Include="Source\Objects\Units\Unit.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Textures\SpriteSheet.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Textures\TextureItem.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Textures\TextureLoader.h">
+      <Filter>Textures</Filter>
     </ClInclude>
     <ClInclude Include="source\UI\UIElements\Button.h">
       <Filter>UI\UIElements</Filter>
@@ -84,12 +120,23 @@
     <ClInclude Include="source\UI\UIRenderer.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Animation\Animator.h" />
-    <ClInclude Include="Source\Animation\Animation.h" />
-    <ClInclude Include="Source\Management\TextureLoader.h" />
-    <ClInclude Include="Source\Management\TextureItem.h" />
+    <ClInclude Include="source\Visuals\Background.h">
+      <Filter>Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Objects\Units\MeleeUnit.h" />
+    <ClInclude Include="Source\Objects\Units\RangedUnit.h" />
+    <ClInclude Include="Source\Visuals\Particle.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Animation\Animation.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Animation\Animator.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\CameraMovement.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
     <ClCompile Include="source\Data\DataManager.cpp">
       <Filter>Data</Filter>
     </ClCompile>
@@ -117,8 +164,17 @@
     <ClCompile Include="source\Objects\Object.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="source\Objects\Unit.cpp">
+    <ClCompile Include="Source\Objects\Units\Unit.cpp">
       <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Textures\SpriteSheet.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Textures\TextureItem.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Textures\TextureLoader.cpp">
+      <Filter>Textures</Filter>
     </ClCompile>
     <ClCompile Include="source\UI\UIElements\Button.cpp">
       <Filter>UI\UIElements</Filter>
@@ -132,9 +188,11 @@
     <ClCompile Include="source\UI\UIRenderer.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Animation\Animator.cpp" />
-    <ClCompile Include="Source\Animation\Animation.cpp" />
-    <ClCompile Include="Source\Management\TextureLoader.cpp" />
-    <ClCompile Include="Source\Management\TextureItem.cpp" />
+    <ClCompile Include="source\Visuals\Background.cpp">
+      <Filter>Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Objects\Units\MeleeUnit.cpp" />
+    <ClCompile Include="Source\Objects\Units\RangedUnit.cpp" />
+    <ClCompile Include="Source\Visuals\Particle.cpp" />
   </ItemGroup>
 </Project>

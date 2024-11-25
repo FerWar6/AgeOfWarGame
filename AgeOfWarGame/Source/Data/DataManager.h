@@ -3,7 +3,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-#include "Enums/GameScreen.h"
+#include "Enums/Screen.h"
 
 // Forward declarations
 class Engine;
@@ -15,6 +15,7 @@ class UIRenderer;
 class UIManager;
 class Queue;
 class TroopManagement;
+class TextureLoader;
 
 class DataManager {
 public:
@@ -25,16 +26,18 @@ public:
     sf::RenderWindow& window;
     sf::Vector2u GetWindowSize();
     // Game State Management
-    void SetGameScreen(GameScreen state);
-    GameScreen GetGameScreen();
+    void SetScreen(Screen state);
+    Screen GetScreen();
 
     // UI Pointer Setup
     void SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen, 
-        Queue* queue, TroopManagement* troop);
+        Queue* queue, TroopManagement* troop, TextureLoader* text);
 
     // Game Object Management
     void AddGameObject(Object* obj);
     std::vector<Object*>& GetGameObjects();
+    std::vector<Object*> GetColliders();
+    std::vector<Object*> GetColliders(Object* obj);
     void MarkObjForAdd(Object* obj);
     void MarkObjForDel(Object* obj);
     void DeleteGameObject(Object* obj);
@@ -69,6 +72,7 @@ public:
     UIManager* uiManRef;
     Queue* queueRef;
     TroopManagement* troopManRef;
+    TextureLoader* textureLdrRef;
     // Resource and Timing Management
     float inputCooldown = 0.25f;
     sf::Clock inputCooldownClock;
@@ -78,8 +82,6 @@ public:
     std::vector<Object*> markedForAddition;
     std::vector<Object*> markedForDeletion;
 
-    sf::Texture placeHoldTexture;
-
     int GetPlayerMoney();
     int GetPlayerExperience();
 
@@ -88,6 +90,10 @@ public:
 
     void AddPlayerMoney(int money);
     void AddPlayerExperience(int exp);
+
+    int groundPos;
+
+    void OnCamMove(int camPos);
 private:
 
     int playerMoney;

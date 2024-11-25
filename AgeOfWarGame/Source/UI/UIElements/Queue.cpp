@@ -1,6 +1,6 @@
 #include "Queue.h"
 #include "UI/UIRenderer.h"
-#include "Objects/Unit.h"
+#include "Objects/Units/Unit.h"
 #include "Data/DataManager.h"
 
 // Constructor
@@ -14,14 +14,23 @@ Queue::Queue(DataManager* dataMan)
     trainingUnit(false)
 {}
 
-void Queue::SetPositions()
+void Queue::SetPositions(sf::Vector2f shopSize)
 {
-    sf::Vector2u window = dataManRef->GetWindowSize();
-    queuePos = sf::Vector2f(window.x / 4, 0);
-    queueSize = sf::Vector2f(window.x - (window.x / 5 * 2 + window.x / 4), 100 / 2);
+    sf::Vector2u windowSize = dataManRef->GetWindowSize();
+    queuePos = sf::Vector2f(windowSize.x / 4, 0);
+    queueSize = sf::Vector2f(windowSize.x - (windowSize.x / 4) - shopSize.x, 0);
     float barMargin = 5;
     queueBarPos = sf::Vector2f(queuePos.x + barMargin, queuePos.y + barMargin);
     queueBarSize = sf::Vector2f(queueSize.x - (barMargin * 2), 10);
+    queueSlotsPos = sf::Vector2f(queueBarPos.x, queueBarPos.y + queueBarSize.y + barMargin);
+}
+
+void Queue::MoveQueue(int pos)
+{
+    sf::Vector2u windowSize = dataManRef->GetWindowSize();
+    float barMargin = 5;
+    queuePos = sf::Vector2f(windowSize.x / 4, 0);
+    queueBarPos = sf::Vector2f(queuePos.x + barMargin + pos, queuePos.y + barMargin);
     queueSlotsPos = sf::Vector2f(queueBarPos.x, queueBarPos.y + queueBarSize.y + barMargin);
 }
 
@@ -88,6 +97,16 @@ sf::RectangleShape Queue::DrawSlot(bool fill, sf::Vector2f pos)
 std::vector<Unit*>& Queue::GetUnitQueue()
 {
     return unitQueue;
+}
+
+int Queue::GetUnitAmount()
+{
+    return unitQueue.size();
+}
+
+int Queue::GetMaxUnits()
+{
+    return maxUnits;
 }
 
 void Queue::CalculateBarPercentage(float currentTime, float targetTime)

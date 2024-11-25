@@ -1,33 +1,38 @@
 #include "Engine/engine.h"
 #include "Objects/Object.h"
+#include <iostream>
+
 Engine::Engine(int strange)
-    : currentGameScreen(GameScreen::StartScreen),
+    : currentScreen(Screen::StartScreen),
     gamePaused(false),
-    textureLoader(),
     dataMan(this, window),
+    textureLoader(),
     gameLdr(&dataMan),
     uiMan(&dataMan),
-    uiRen(&uiMan, &dataMan, window),
+    uiRen(&uiMan, &dataMan, window, &textureLoader),
     troopMan(&dataMan),
-    enemySpawner(3.5f, &dataMan)
+    enemySpawner(3.5f, &dataMan),
+    background(&textureLoader),
+    camMovement(window, cam, &dataMan)
 { 
-
-    int width = 1200;
-    int height = 500;
-    std::string name = "AgeOfWar";
-    window.create(sf::VideoMode(width, height), name);
-    DebugLn("Constructed engine");
+    window.create(sf::VideoMode(winWidth, winHeight), name);
+    cam = sf::View(sf::FloatRect(0,0, winWidth, winHeight));
+    window.setView(cam);
     uiRen.SetPositions();
-    dataMan.SetPointers(&gameLdr, &uiMan, &uiRen, &uiRen.queue, &troopMan);
+    dataMan.SetPointers(&gameLdr, &uiMan, &uiRen, &uiRen.queue, &troopMan, &textureLoader);
+    gameLdr.CreateBases();
     Start();
 }
 void Engine::Start() {
-    DebugLn("Started Engine");
     UpdateEngine();
 }
 void Engine::UpdateEngine()
 {
     while (window.isOpen()) {
+        sf::Time elapsed = gameClock.restart();
+        accumulator += elapsed.asSeconds();
+
+
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -35,21 +40,27 @@ void Engine::UpdateEngine()
                 window.close();
             }
         }
-        if(!gamePaused) UpdateGame();
-        RenderGame();
+        while (accumulator >= timeStep) {
+            if (!gamePaused) UpdateGame();
+            UpdateCollision();
+            RenderGame();
+            accumulator -= timeStep;
+        }
     }
 }
 
+
 void Engine::UpdateGame()
 {
+    if (currentScreen == Screen::Screen) camMovement.UpdateCam();
     if (!dataMan.markedForAddition.empty() || !dataMan.markedForDeletion.empty()) {
         dataMan.UpdateGameObjVector();
     }
-    switch (currentGameScreen) {
-    case GameScreen::StartScreen:
+    switch (currentScreen) {
+    case Screen::StartScreen:
         break;
 
-    case GameScreen::GameScreen:
+    case Screen::Screen:
         enemySpawner.UpdateSpawner();
         if (!dataMan.gameObjects.empty()) {
             for (auto& obj : dataMan.GetGameObjects()) {
@@ -59,7 +70,7 @@ void Engine::UpdateGame()
         if (dataMan.dataCleared) dataMan.dataCleared = false;
         break;
 
-    case GameScreen::EndScreen:
+    case Screen::EndScreen:
         if (!dataMan.dataCleared) dataMan.ClearGameData();
         break;
     }
@@ -68,21 +79,18 @@ void Engine::UpdateGame()
 
 void Engine::RenderGame() {
     window.clear();
+    background.Drawbg(window);
 
-    sf::Sprite testSprite;
-    testSprite.setTexture(dataMan.placeHoldTexture);
-    window.draw(testSprite);
-
-    switch (currentGameScreen) {
-    case GameScreen::StartScreen:
+    switch (currentScreen) {
+    case Screen::StartScreen:
         RenderStartScreen();
         break;
 
-    case GameScreen::GameScreen:
-        RenderGameScreen();
+    case Screen::Screen:
+        RenderScreen();
         break;
 
-    case GameScreen::EndScreen:
+    case Screen::EndScreen:
         RenderDeathScreen();
         break;
     }
@@ -90,21 +98,38 @@ void Engine::RenderGame() {
     window.display();
 }
 
-void Engine::SetGameScreen(GameScreen state)
+void Engine::UpdateCollision()
 {
-    currentGameScreen = state;
+    for (auto& curObj : dataMan.GetColliders()) {
+        for (auto& obj : dataMan.GetColliders(curObj)) {
+            if (curObj->GetRect().intersects(obj->GetRect())) {
+                obj->OnCollision(curObj);
+            }
+        }
+    }
 }
 
-GameScreen Engine::GetGameScreen()
+void Engine::SetScreen(Screen state)
 {
-    return currentGameScreen;
+    currentScreen = state;
+    camMovement.ResetCamPos();
+}
+
+Screen Engine::GetScreen()
+{
+    return currentScreen;
+}
+
+int Engine::GetWorldSize()
+{
+    return worldSize;
 }
 
 void Engine::RenderStartScreen()
 {
 }
 
-void Engine::RenderGameScreen()
+void Engine::RenderScreen()
 {
     for (auto& obj : dataMan.GetGameObjects()) {
         obj->RenderObj(window);

@@ -12,13 +12,15 @@ class Queue
 public:
     // Constructor
     Queue(DataManager* dataMan);
-    void SetPositions();
+    void SetPositions(sf::Vector2f shopSize);
+    void MoveQueue(int pos);
     // Public Interface
     void DrawQueue(sf::RenderWindow& window);
     void UpdateQueue();
     void AddUnitToQueue(Unit* unit);
     std::vector<Unit*>& GetUnitQueue(); // Consider making this const if modifications are not needed
-
+    int GetUnitAmount();
+    int GetMaxUnits();
 private:
     // Private Helper Functions
     void DrawQueueSlots(sf::RenderWindow& window, int filledSlots);

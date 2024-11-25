@@ -2,11 +2,12 @@
 
 #include "Engine/engine.h"
 #include "Objects/Object.h"
-#include "Objects/Unit.h"
+#include "Objects/Units/Unit.h"
 #include "Objects/Base.h"
 #include "Management/TroopManagement.h"
+#include "Textures/TextureLoader.h"
 #include <algorithm>
-
+#include "Data/ServiceLocator.h"
 // Constructor
 DataManager::DataManager(Engine* engine, sf::RenderWindow& window)
     : playerMoney(100),
@@ -20,8 +21,11 @@ DataManager::DataManager(Engine* engine, sf::RenderWindow& window)
     uiManRef(nullptr),
     uiRenRef(nullptr),
     queueRef(nullptr),
-    troopManRef(nullptr)
-{}
+    troopManRef(nullptr),
+    textureLdrRef(nullptr)
+{
+    sl::SetDataManager(this);
+}
 
 sf::Vector2u DataManager::GetWindowSize()
 {
@@ -29,24 +33,26 @@ sf::Vector2u DataManager::GetWindowSize()
 }
 
 // Game State Management
-void DataManager::SetGameScreen(GameScreen state)
+void DataManager::SetScreen(Screen state)
 {
-    engineRef->SetGameScreen(state);
+    engineRef->SetScreen(state);
 }
 
-GameScreen DataManager::GetGameScreen()
+Screen DataManager::GetScreen()
 {
-    return engineRef->GetGameScreen();
+    return engineRef->GetScreen();
 }
 
 // UI Pointer Setup
-void DataManager::SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen, Queue* queue, TroopManagement* troop)
+void DataManager::SetPointers(GameLoader* loader, UIManager* uiMan, UIRenderer* uiRen, Queue* queue, TroopManagement* troop, TextureLoader* text)
 {
     gameLdrRef = loader;
     uiManRef = uiMan;
     uiRenRef = uiRen;
     queueRef = queue;
     troopManRef = troop;
+    textureLdrRef = text;
+    groundPos = window.getSize().y - 50;
 }
 
 // Game Object Management
@@ -60,10 +66,29 @@ std::vector<Object*>& DataManager::GetGameObjects()
     return gameObjects;
 }
 
+std::vector<Object*> DataManager::GetColliders()
+{
+    std::vector<Object*> vector;
+    for (auto& obj : GetGameObjects()) {
+        if (obj->hasCollision) {
+            vector.push_back(obj);
+        }
+        return vector;
+    }
+}
+std::vector<Object*> DataManager::GetColliders(Object* parObj)
+{
+    std::vector<Object*> vector;
+    for (auto& obj : GetGameObjects()) {
+        if (obj->hasCollision && obj != parObj) {
+            vector.push_back(obj);
+        }
+        return vector;
+    }
+}
 void DataManager::MarkObjForAdd(Object* obj)
 {
     markedForAddition.push_back(obj);
-
 }
 
 void DataManager::MarkObjForDel(Object* obj)
@@ -109,7 +134,7 @@ std::vector<Unit*>& DataManager::GetEnemies() {
 
     for (Object* obj : gameObjects) {
         if (Unit* unit = dynamic_cast<Unit*>(obj)) {
-            if (unit->isEnemy) {
+            if (unit->isEnemy && !unit->GetUnitStopped()) {
                 enemies.push_back(unit);
             }
         }
@@ -125,7 +150,7 @@ std::vector<Unit*>& DataManager::GetGuardians() {
 
     for (Object* obj : gameObjects) {
         if (Unit* unit = dynamic_cast<Unit*>(obj)) {
-            if (!unit->isEnemy) {
+            if (!unit->isEnemy && !unit->GetUnitStopped()) {
                 guardians.push_back(unit);
             }
         }
@@ -163,7 +188,7 @@ void DataManager::DamageUnit(Unit* markedUnit, int damage) {
 // Game End and Data Clearing
 void DataManager::EndGame(bool won)
 {
-    SetGameScreen(GameScreen::EndScreen);
+    SetScreen(Screen::EndScreen);
     if (won) uiRenRef->winText = "You Won!";
     if (!won) uiRenRef->winText = "You Lost :(";
 }
@@ -228,6 +253,11 @@ void DataManager::AddPlayerMoney(int money)
 void DataManager::AddPlayerExperience(int exp)
 {
     playerExperience += exp;
+}
+
+void DataManager::OnCamMove(int camPos)
+{
+    uiRenRef->MoveUIWithCam(camPos);
 }
 
 

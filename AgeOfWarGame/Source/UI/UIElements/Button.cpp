@@ -1,19 +1,45 @@
 #include "Button.h"
 #include "Data/DataManager.h"
+#include "Data/ServiceLocator.h"
 #include "Management/TextureManagement.h"
+#include "Textures/TextureItem.h"
+#include "UI/UIRenderer.h"
 
-Button::Button(sf::Vector2f pos, sf::String path, std::function<void()> onClick, GameScreen state, DataManager* dataMan)
+Button::Button(sf::Vector2i pos, sf::Texture& txr, std::function<void()> onClick,
+    Screen screen, bool center)
     : buttonPos(pos),
+    baseButtonPos(buttonPos),
+    buttonTxr(txr),
     OnClick(onClick),
-    buttonState(state),
-    dataManRef(dataMan)
+    shopState(ShopState::None),
+    gameScreen(screen),
+    centered(center),
+    dataManRef(sl::GetDataManager()),
+    infoText("")
 {
-    TextureManagement::LoadTextFromPath(texture, path);
-    buttonSprite.setTexture(texture);
+    Start();
+}
+Button::Button(sf::Vector2i pos, sf::Texture& txr, std::function<void()> onClick,
+    ShopState state, std::string info, bool center)
+    : buttonPos(pos),
+    baseButtonPos(buttonPos),
+    buttonTxr(txr),
+    OnClick(onClick),
+    shopState(state),
+    gameScreen(Screen::Screen),
+    centered(center),
+    dataManRef(sl::GetDataManager()),
+    infoText(info)
+{
+    Start();
+}
 
-    sf::FloatRect buttonBounds = buttonSprite.getLocalBounds();
-    buttonSprite.setOrigin(buttonBounds.width / 2, buttonBounds.height / 2);
+void Button::Start()
+{
+    buttonSprite.setTexture(buttonTxr);
     buttonSprite.setPosition(buttonPos);
+    sf::FloatRect buttonBounds = buttonSprite.getLocalBounds();
+    if (centered) buttonSprite.setOrigin(buttonBounds.width / 2, buttonBounds.height / 2);
 }
 void Button::UpdateButton()
 {
@@ -26,7 +52,7 @@ void Button::UpdateButton()
 
 void Button::RenderButton()
 {
-    //std::cerr << IsClicking() << "  " << HoveringOver() << std::endl;
+    buttonSprite.setPosition(buttonPos);
     if (HoveringOver() && IsClicking()) {
         buttonSprite.setColor(sf::Color(200, 200, 200));
     }
@@ -36,15 +62,18 @@ void Button::RenderButton()
     else {
         buttonSprite.setColor(sf::Color(220, 220, 220));
     }
-
-
-
-    buttonSprite.setPosition(buttonPos);
     dataManRef->window.draw(buttonSprite);
 }
 
 bool Button::HoveringOver() {
-    return buttonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos));
+    if (GetShopState() == ShopState::None || GetShopState() == dataManRef->uiRenRef->GetShopState())
+    {
+        buttonSprite.setPosition(baseButtonPos);
+        bool isHoveringOver = buttonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos));
+        buttonSprite.setPosition(buttonPos);
+        return isHoveringOver;
+    }
+    return false;
 }
 bool Button::IsClicking()
 {
@@ -54,4 +83,27 @@ void Button::HandleClick() {
     if (OnClick) {
         OnClick();
     }
+}
+
+ShopState Button::GetShopState()
+{
+    return shopState;
+}
+
+Screen Button::GetScreen()
+{
+    return gameScreen;
+}
+
+std::string Button::GetInfoText()
+{
+    return infoText;
+}
+
+
+
+void Button::UpdateButtonPos(int pos)
+{
+    buttonPos = sf::Vector2f(baseButtonPos.x + pos, baseButtonPos.y);
+    buttonSprite.setPosition(buttonPos);
 }

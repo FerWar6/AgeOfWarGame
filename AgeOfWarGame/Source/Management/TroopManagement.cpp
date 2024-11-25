@@ -1,9 +1,13 @@
 #include "TroopManagement.h"
 
-#include "Objects/Unit.h"
+#include "Objects/Units/MeleeUnit.h"
+#include "Objects/Units/RangedUnit.h"
 #include "Data/DataManager.h"
 #include "Objects/Base.h"
 #include "UI/UIElements/Queue.h"
+#include "Textures/TextureLoader.h"
+#include "Textures/SpriteSheet.h"
+#include "Engine/EngineExtentions/Debug.h"
 
 TroopManagement::TroopManagement(DataManager* dataMan)
     : dataManRef(dataMan)
@@ -11,17 +15,16 @@ TroopManagement::TroopManagement(DataManager* dataMan)
 
 void TroopManagement::SpawnTroop(Age age, UnitType type)
 {
+    sf::Vector2f pos = sf::Vector2f(dataManRef->playerBase->frontOfBasePos.x, dataManRef->playerBase->frontOfBasePos.y);
+    sf::Vector2f size = sf::Vector2f(10, 10);
     if (age == Age::Arcade && type == UnitType::Melee) {
-        sf::String path = "Assets/Units/testing";
+        SpriteSheet& unitSheet = dataManRef->textureLdrRef->GetSpriteSheet("Unit1Sheet");
         int unitCost = 10;
         if (dataManRef->GetPlayerMoney() >= unitCost) {
-            Unit* newGuardian = new Unit(dataManRef->playerBase->frontOfBasePos, dataManRef, path,
+            MeleeUnit* newGuardian = new MeleeUnit(sf::FloatRect(pos, size), unitSheet,
                 0.75, //melee cooldown
                 34, //melee damage
                 100, //melee sight range
-                1, //ranged coo;down
-                50, //ranged damage
-                300, //ranged sight range
                 75, //allie sight range
                 150, //health
                 0.5); //spawntime
@@ -30,20 +33,34 @@ void TroopManagement::SpawnTroop(Age age, UnitType type)
         }
     }
     if (age == Age::Arcade && type == UnitType::Ranged) {
-        //sf::String path = "Assets/Monsters/Goblin/Attack3.png";
-        sf::String path = "Assets/Knight/sheets";
-        int unitCost = 50;
+        SpriteSheet& unitSheet = dataManRef->textureLdrRef->GetSpriteSheet("Unit2Sheet");
+        int unitCost = 20;
         if (dataManRef->GetPlayerMoney() >= unitCost) {
-            Unit* newGuardian = new Unit(dataManRef->playerBase->frontOfBasePos, dataManRef, path,
+            RangedUnit* newGuardian = new RangedUnit(sf::FloatRect(pos, size), unitSheet,
                 0.75, //melee cooldown
                 34, //melee damage
                 100, //melee sight range
-                1, //ranged coo;down
+                1, //ranged cooldown
                 50, //ranged damage
                 300, //ranged sight range
                 75, //allie sight range
                 150, //health
-                2); //spawntime
+                1); //spawntime
+            dataManRef->queueRef->AddUnitToQueue(newGuardian);
+            dataManRef->AddPlayerMoney(-unitCost);
+        }
+    }
+    if (age == Age::Arcade && type == UnitType::Tank) {
+        SpriteSheet& unitSheet = dataManRef->textureLdrRef->GetSpriteSheet("Unit3Sheet");
+        int unitCost = 20;
+        if (dataManRef->GetPlayerMoney() >= unitCost) {
+            MeleeUnit* newGuardian = new MeleeUnit(sf::FloatRect(pos, size), unitSheet,
+                0.75, //melee cooldown
+                34, //melee damage
+                100, //melee sight range
+                75, //allie sight range
+                150, //health
+                1); //spawntime
             dataManRef->queueRef->AddUnitToQueue(newGuardian);
             dataManRef->AddPlayerMoney(-unitCost);
         }
@@ -52,19 +69,19 @@ void TroopManagement::SpawnTroop(Age age, UnitType type)
 
 void TroopManagement::SpawnEnemyTroop(Age age, UnitType type)
 {
+    sf::Vector2f pos = sf::Vector2f(dataManRef->enemyBase->frontOfBasePos.x, dataManRef->enemyBase->frontOfBasePos.y);
+    sf::Vector2f size = sf::Vector2f(10, 10);
     if (age == Age::Arcade && type == UnitType::Melee) {
-        sf::String path = "Assets/Units/testing";
-        Unit* newEnemy = new Unit(dataManRef->enemyBase->frontOfBasePos, dataManRef, path,
+        SpriteSheet& unitSheet = dataManRef->textureLdrRef->GetSpriteSheet("Unit3Sheet");
+        MeleeUnit* newEnemy = new MeleeUnit(sf::FloatRect(pos, size), unitSheet,
             0.75, //melee cooldown
             34, //melee damage
             100, //melee sight range
-            1, //ranged coo;down
-            50, //ranged damage
-            300, //ranged sight range
             75, //allie sight range
             150, //health
             30, //money
             10); //experience
         dataManRef->MarkObjForAdd(newEnemy);
+        //DebugLn("spawned enemy at pos: " << dataManRef->enemyBase->frontOfBasePos.x << "x" << dataManRef->enemyBase->frontOfBasePos.y);
     }
 }
