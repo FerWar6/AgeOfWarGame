@@ -11,7 +11,7 @@ Engine::Engine(int strange)
     uiMan(&dataMan),
     uiRen(&uiMan, &dataMan, window, &textureLoader),
     troopMan(&dataMan),
-    enemySpawner(3.5f, &dataMan),
+    enemySpawner(5, &dataMan),
     background(&textureLoader),
     camMovement(window, cam, &dataMan)
 { 

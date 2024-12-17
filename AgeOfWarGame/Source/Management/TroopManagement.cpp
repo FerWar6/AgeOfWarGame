@@ -44,7 +44,7 @@ void TroopManagement::SpawnTroop(Age age, UnitType type)
                 50, //ranged damage
                 300, //ranged sight range
                 75, //allie sight range
-                150, //health
+                100, //health
                 1); //spawntime
             dataManRef->queueRef->AddUnitToQueue(newGuardian);
             dataManRef->AddPlayerMoney(-unitCost);
@@ -52,15 +52,15 @@ void TroopManagement::SpawnTroop(Age age, UnitType type)
     }
     if (age == Age::Arcade && type == UnitType::Tank) {
         SpriteSheet& unitSheet = dataManRef->textureLdrRef->GetSpriteSheet("Unit3Sheet");
-        int unitCost = 20;
+        int unitCost = 50;
         if (dataManRef->GetPlayerMoney() >= unitCost) {
             MeleeUnit* newGuardian = new MeleeUnit(sf::FloatRect(pos, size), unitSheet,
-                0.75, //melee cooldown
-                34, //melee damage
+                1, //melee cooldown
+                50, //melee damage
                 100, //melee sight range
                 75, //allie sight range
-                150, //health
-                1); //spawntime
+                300, //health
+                1.5); //spawntime
             dataManRef->queueRef->AddUnitToQueue(newGuardian);
             dataManRef->AddPlayerMoney(-unitCost);
         }
@@ -74,11 +74,11 @@ void TroopManagement::SpawnEnemyTroop(Age age, UnitType type)
     if (age == Age::Arcade && type == UnitType::Melee) {
         SpriteSheet& unitSheet = dataManRef->textureLdrRef->GetSpriteSheet("Unit3Sheet");
         MeleeUnit* newEnemy = new MeleeUnit(sf::FloatRect(pos, size), unitSheet,
-            0.75, //melee cooldown
-            34, //melee damage
+            1, //melee cooldown
+            50, //melee damage
             100, //melee sight range
             75, //allie sight range
-            150, //health
+            300, //health
             30, //money
             10); //experience
         dataManRef->MarkObjForAdd(newEnemy);
