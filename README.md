@@ -1,3 +1,7 @@
+I created this game because my favourite flash game was Age Of War.
+I challanged myself to recreate the game in C++.
+This is my first time ever using C++.
+
 How to use:
 
 Clone the project.
